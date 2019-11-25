@@ -33,14 +33,16 @@ public abstract class Entity {
     public void superTick() {
         bounds.x = x;
         bounds.y = y;
+        tick();
     }
     
     public void superRender(Screen s) {
         
+        render(s);
     }
     
     protected abstract void tick();
-    protected abstract void render();
+    protected abstract void render(Screen s);
     
     public int getX() {
         return x;

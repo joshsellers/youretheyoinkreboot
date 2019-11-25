@@ -8,7 +8,7 @@ public class Screen {
 
     public final static int WIDTH = 900;
     public final static int HEIGHT = 600;
-    public final static int SCALE = 4;
+    public final static int SCALE = 3;
     
     public final static int SHIFT = 3;
     

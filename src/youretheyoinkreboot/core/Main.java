@@ -1,7 +1,6 @@
 package youretheyoinkreboot.core;
 
 import com.amp.pre.ABFrame;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -9,6 +8,7 @@ import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.core.gfx.SpriteSheet;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.world.World;
+import youretheyoinkreboot.world.entities.Camera;
 
 /**
  *
@@ -16,7 +16,7 @@ import youretheyoinkreboot.world.World;
  */
 public class Main extends ABFrame {
     
-    public final static String VERSION = "0.01";
+    public final static String VERSION = "0.02";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -28,6 +28,8 @@ public class Main extends ABFrame {
     private Key k;
     
     private World w;
+    
+    private Camera cam;
     
     public static void main(String[] args) {
         new Main(60, "", true, true, 1.0f, Screen.WIDTH, Screen.HEIGHT, 1, 
@@ -50,6 +52,11 @@ public class Main extends ABFrame {
         f.addKeyListener(k);
         
         w = new World(s);
+        
+        cam = new Camera(0, 0, s);
+        cam.trackWASD(k);
+        w.addEntity(cam);
+        cam.show = true;
     }
 
     @Override
@@ -57,11 +64,6 @@ public class Main extends ABFrame {
         f.requestFocusInWindow();
         
         w.tick();
-        
-        if (k.w.isPressed()) s.setOffset(s.getXOffset(), s.getYOffset()-1);
-        else if (k.s.isPressed()) s.setOffset(s.getXOffset(), s.getYOffset()+1);
-        else if (k.a.isPressed()) s.setOffset(s.getXOffset()-1, s.getYOffset());
-        else if (k.d.isPressed()) s.setOffset(s.getXOffset()+1, s.getYOffset());
     }
 
     @Override
