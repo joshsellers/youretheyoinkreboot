@@ -3,6 +3,7 @@ package youretheyoinkreboot.world.entities;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.core.gfx.SpriteSheet;
 import youretheyoinkreboot.util.Key;
+import youretheyoinkreboot.world.World;
 
 /**
  *
@@ -10,16 +11,14 @@ import youretheyoinkreboot.util.Key;
  */
 public class Camera extends Entity {
     private final Screen s;
-    
-    public boolean show;
-    
+        
     private boolean trackWASD = false;
     private boolean tracking = false;
     private Key k = null;
     private Entity target = null;
 
-    public Camera(int x, int y, Screen s) {
-        super(x, y, 1, 1, 0);
+    public Camera(int x, int y, Screen s, World w) {
+        super(x, y, 1, 1, 0, w);
         this.s = s;
     }
 
@@ -33,16 +32,28 @@ public class Camera extends Entity {
                 else if (k.d.isPressed()) x++;
             } else if (target != null) {
                 setPos(target.getX(), target.getY());
+                
             }
         }
         
-        s.setOffset(x - ((Screen.WIDTH / Screen.SCALE) / 2) + SpriteSheet.TILE_SIZE, 
-                y - ((Screen.HEIGHT / Screen.SCALE) / 2) + SpriteSheet.TILE_SIZE);
+        int xOffset = SpriteSheet.TILE_SIZE;
+        int yOffset = SpriteSheet.TILE_SIZE;
+        if (target != null && !trackWASD) {
+            xOffset = target.getWidth() / 2;
+            yOffset = target.getHeight() / 2;
+            if (target.isMoving()) {
+                xOffset -= target.vx;
+                yOffset -= target.vy;
+            }
+        }
+        
+        s.setOffset(x - ((Screen.WIDTH / Screen.SCALE) / 2) + (int)((float)xOffset*1.5), 
+                y - ((Screen.HEIGHT / Screen.SCALE) / 2) + (int)((float)yOffset*1.5));
     }
 
     @Override
     protected void render(Screen s) {
-        if (show) s.render(x, y, 6, 0, 0, 1);
+        s.render(x, y, 6, 0, 0, 1);
     }
     
     public void track(Entity e) {
@@ -64,7 +75,7 @@ public class Camera extends Entity {
     public void setPos(int x, int y) {
         this.x = x;
         this.y = y;
-        tracking = false;
+        tracking = true;
         trackWASD = false;
     }
     

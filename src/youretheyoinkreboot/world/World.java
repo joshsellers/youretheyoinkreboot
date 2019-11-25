@@ -14,12 +14,14 @@ import youretheyoinkreboot.world.entities.Entity;
  */
 public class World {
     private final List<Entity> entities = new ArrayList<>();
+    private final Screen s;
     
     private int bx, by;
     private int[][] oldBackground;
     private int[][] background;
     
     public World(Screen s) {
+        this.s = s;
         generateBackground(s);
     }
     
@@ -39,8 +41,8 @@ public class World {
     private void drawBackground(int xa, int ya, Screen s) {
         moveBackground(s);
         
-        int w = ((Screen.WIDTH / Screen.SCALE) / SpriteSheet.TILE_SIZE) + 2;
-        int h = ((Screen.HEIGHT / Screen.SCALE) / SpriteSheet.TILE_SIZE) + 2;
+        int w = ((Screen.WIDTH / Screen.SCALE) / SpriteSheet.TILE_SIZE) + padding;
+        int h = ((Screen.HEIGHT / Screen.SCALE) / SpriteSheet.TILE_SIZE) + padding;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 s.render(
@@ -53,11 +55,12 @@ public class World {
     
     private int lastxo = 0;
     private int lastyo = 0;
+    private final int padding = 2;
     private void moveBackground(Screen s) {
         oldBackground = background;
         
-        int w = ((Screen.WIDTH / Screen.SCALE) / SpriteSheet.TILE_SIZE) + 2;
-        int h = ((Screen.HEIGHT / Screen.SCALE) / SpriteSheet.TILE_SIZE) + 2;
+        int w = ((Screen.WIDTH / Screen.SCALE) / SpriteSheet.TILE_SIZE) + padding;
+        int h = ((Screen.HEIGHT / Screen.SCALE) / SpriteSheet.TILE_SIZE) + padding;
         
         int xDif = ((lastxo) - (s.getXOffset()));
         int yDif = ((lastyo) - (s.getYOffset()));
@@ -115,8 +118,8 @@ public class World {
     }
     
     private void generateBackground(Screen s) {
-        int w = ((Screen.WIDTH / Screen.SCALE) / SpriteSheet.TILE_SIZE) + 2;
-        int h = ((Screen.HEIGHT / Screen.SCALE) / SpriteSheet.TILE_SIZE) + 2;
+        int w = ((Screen.WIDTH / Screen.SCALE) / SpriteSheet.TILE_SIZE) + padding;
+        int h = ((Screen.HEIGHT / Screen.SCALE) / SpriteSheet.TILE_SIZE) + padding;
         background = new int[w * h][2];
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
@@ -137,5 +140,9 @@ public class World {
     
     public synchronized void addEntity(Entity e) {
         this.getEntities().add(e);
+    }
+    
+    public Screen getScreen() {
+        return s;
     }
 }

@@ -2,12 +2,16 @@ package youretheyoinkreboot.world.entities;
 
 import java.awt.Rectangle;
 import youretheyoinkreboot.core.gfx.Screen;
+import youretheyoinkreboot.world.World;
 
 /**
  *
  * @author josh
  */
 public abstract class Entity {
+    
+    protected World w;
+    
     protected int x, y;
     protected float vx, vy;
     
@@ -20,29 +24,58 @@ public abstract class Entity {
     protected int maxHitPoints;
     protected int hp;
     
-    public Entity(int x, int y, int width, int height, int maxHitPoints) {
+    protected boolean collides = false;
+    
+    protected boolean show = true;
+    
+    protected int maxSpeed;
+    
+    protected boolean moving;
+    
+    public Entity(int x, int y, int width, int height, int maxHitPoints, World w) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.maxHitPoints = maxHitPoints;
+        this.w = w;
         
         hp = maxHitPoints;
     }
     
     public void superTick() {
+        tick();
+        move();
         bounds.x = x;
         bounds.y = y;
-        tick();
     }
     
     public void superRender(Screen s) {
-        
-        render(s);
+        if (isVisible()) {
+            render(s);
+        }
     }
     
     protected abstract void tick();
     protected abstract void render(Screen s);
+    
+    private void move() {
+        int oldx = x;
+        int oldy = y;
+        x += vx;
+        y += vy;
+        
+        for (Entity e : w.getEntities()) {
+            if (e != this && e.active && this.intersects(e)) {
+                x = oldx;
+                y = oldy;
+                vx = (-vx / 2);
+                vy = (-vy / 2);
+            }
+        }
+        
+        moving = Math.abs(vx) > 0 || Math.abs(vy) > 0;
+    }
     
     public int getX() {
         return x;
@@ -78,5 +111,37 @@ public abstract class Entity {
     
     public int getMaxHP() {
         return maxHitPoints;
+    }
+    
+    public void show() {
+        show = true;
+    }
+    
+    public void hide() {
+        show = false;
+    }
+    
+    public boolean isVisible() {
+        return show;
+    }
+    
+    public World getWorld() {
+        return w;
+    }
+    
+    public boolean collides() {
+        return collides;
+    }
+    
+    public void enableCollision() {
+        collides = true;
+    }
+    
+    public void noClip() {
+        collides = false;
+    }
+    
+    public boolean isMoving() {
+        return moving;
     }
 }

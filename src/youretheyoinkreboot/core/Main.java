@@ -1,5 +1,6 @@
 package youretheyoinkreboot.core;
 
+import com.amp.mathem.Statc;
 import com.amp.pre.ABFrame;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -9,6 +10,7 @@ import youretheyoinkreboot.core.gfx.SpriteSheet;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.Camera;
+import youretheyoinkreboot.world.entities.Sprite;
 
 /**
  *
@@ -16,7 +18,7 @@ import youretheyoinkreboot.world.entities.Camera;
  */
 public class Main extends ABFrame {
     
-    public final static String VERSION = "0.02";
+    public final static String VERSION = "0.03";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -53,10 +55,54 @@ public class Main extends ABFrame {
         
         w = new World(s);
         
-        cam = new Camera(0, 0, s);
-        cam.trackWASD(k);
+        cam = new Camera(0, 0, s, w);
         w.addEntity(cam);
-        cam.show = true;
+        cam.hide();
+        
+        Sprite testSprite = new Sprite(0, 0, 2<<Screen.SHIFT, 2<<Screen.SHIFT, 2 + 0 * sheet.width, 1000, sheet, w) {
+            @Override
+            protected void tick() {
+                maxSpeed = 20;
+                if (k.w.isPressed() && vy > -maxSpeed) vy--;
+                else if (k.s.isPressed() && vy < maxSpeed) vy++;
+                else if (k.a.isPressed() && vx > -maxSpeed) vx--;
+                else if (k.d.isPressed() && vx < maxSpeed) vx++;
+                if (k.b.isPressed()) {
+                    if (vx > 0) vx--;
+                    else if (vx < 0) vx++;
+                    if (vy > 0) vy--;
+                    else if (vy < 0) vy++;
+                } 
+            }
+
+            @Override
+            protected void render(Screen s) {
+                
+            }
+        };
+        w.addEntity(testSprite);
+        testSprite.show();
+        cam.track(testSprite);
+        
+        int len = 600;
+        for (int i = 0; i < len; i++) {
+            Sprite sprite = new Sprite(Statc.intRandom(-10000, 10000), 
+                Statc.intRandom(-10000, 10000), 8, 8, 4 + 0 * sheet.width, 10, sheet, w) {
+                @Override
+                protected void tick() {
+
+                }
+
+                @Override
+                protected void render(Screen s) {
+
+                }
+                
+            };
+            w.addEntity(sprite);
+            sprite.enableCollision();
+        }
+        testSprite.enableCollision();
     }
 
     @Override
