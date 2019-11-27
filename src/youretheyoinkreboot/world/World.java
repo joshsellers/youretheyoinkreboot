@@ -26,15 +26,23 @@ public class World {
     }
     
     public void tick() {
-        for (Entity e : getEntities()) {
-            if (e.isActive()) e.superTick();
+        try {
+        getEntities().stream().filter((e) -> (e.isActive())).forEach((e) -> {
+            e.superTick();
+        }); 
+        } catch (java.util.ConcurrentModificationException ex) {
+            
         }
     }
     
     public void render(Screen s) {
         drawBackground(s.getXOffset(), s.getYOffset(), s);
-        for (Entity e : getEntities()) {
-            if (e.isActive()) e.superRender(s);
+        try { 
+        getEntities().stream().filter((e) -> (e.isActive())).forEach((e) -> {
+            e.superRender(s);
+        }); 
+        } catch (java.util.ConcurrentModificationException ex) {
+            
         }
     }
     

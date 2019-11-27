@@ -6,8 +6,8 @@ package youretheyoinkreboot.core.gfx;
  */
 public class Screen {
 
-    public final static int WIDTH = 900;
-    public final static int HEIGHT = 600;
+    public static int WIDTH = 900;
+    public static int HEIGHT = 600;
     public final static int SCALE = 2;
     
     public final static int SHIFT = 3;

@@ -14,9 +14,11 @@ public abstract class Sprite extends Entity {
     
     protected int[] tiles;
     
-    public Sprite(int x, int y, int w, int h, int tile, int maxHitPoints, SpriteSheet sheet, World world) {
+    protected int mirrorDir;
+    
+    public Sprite(int x, int y, int w, int h, int tile, int maxHitPoints, World world) {
         super(x, y, w, h, maxHitPoints, world);
-        this.sheet = sheet;
+        this.sheet = world.getScreen().sheet;
         int tw = w / SpriteSheet.TILE_SIZE;
         int th = h / SpriteSheet.TILE_SIZE;
         tiles = new int[tw * th];
@@ -47,7 +49,7 @@ public abstract class Sprite extends Entity {
                     int xOffset = xa * SpriteSheet.TILE_SIZE;
                     int yOffset = ya * SpriteSheet.TILE_SIZE;
                     int tile = tiles[xa + ya * w];
-                    s.render(rx + xOffset, ry + yOffset, tile, 0, 0, 1);
+                    s.render(rx + xOffset, ry + yOffset, tile, mirrorDir, 0, 1);
                 }
             }
             

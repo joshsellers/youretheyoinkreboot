@@ -1,6 +1,9 @@
 package youretheyoinkreboot.world.entities;
 
+import com.amp.mathem.Statc;
 import java.awt.Rectangle;
+import java.util.Timer;
+import java.util.TimerTask;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.world.World;
 
@@ -73,7 +76,7 @@ public abstract class Entity {
         bounds.y = y;
         
         for (Entity e : w.getEntities()) {
-            if (e != this && e.active && this.intersects(e) && e.collides()) {
+            if (e != this && e.active && this.intersects(e) && e.collides() && collides()) {
                 x = oldx;
                 y = oldy;
                 e.vx += Math.floor(vx);
@@ -100,18 +103,53 @@ public abstract class Entity {
     
     protected void thrustUp() {
         if (vy > -maxSpeed) vy -= acc;
+        thrustParticles(x + Statc.intRandom(-2, width/2), y + height);
     }
     
     protected void thrustDown() {
         if (vy < maxSpeed) vy += acc;
+        thrustParticles(x + Statc.intRandom(-2, width/2), y);
     }
     
     protected void thrustLeft() {
         if (vx > -maxSpeed) vx -= acc;
+        thrustParticles(x + width, y + Statc.intRandom(-2, height/2));
     }
     
     protected void thrustRight() {
         if (vx < maxSpeed) vx += acc;
+        thrustParticles(x, y + Statc.intRandom(-2, height/2));
+        
+    }
+    
+    private void thrustParticles(int x, int y) {
+            for (int i = 0; i < 3; i++) {
+            Sprite sp = new Sprite((x) + (int) vx, 
+                (y) + (int) vy, 8, 8, 
+                4 + 1 * w.getScreen().sheet.width, 1, w) {
+                @Override
+                protected void tick() {
+                    mirrorDir = Statc.intRandom(0, Screen.BIT_MIRROR_Y);
+                }
+
+                @Override
+                protected void render(Screen s) {
+
+                }
+            };
+            sp.noClip();
+            sp.vx = vx;
+            sp.vy = vy;
+            w.addEntity(sp);
+
+            Timer t = new Timer();
+            t.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    sp.active = false;
+                }
+            }, Statc.intRandom(100, 500));
+        }
     }
     
     public int getX() {

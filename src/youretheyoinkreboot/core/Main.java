@@ -2,7 +2,9 @@ package youretheyoinkreboot.core;
 
 import com.amp.mathem.Statc;
 import com.amp.pre.ABFrame;
+import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import youretheyoinkreboot.core.gfx.Screen;
@@ -18,7 +20,7 @@ import youretheyoinkreboot.world.entities.Sprite;
  */
 public class Main extends ABFrame {
     
-    public final static String VERSION = "0.04";
+    public final static String VERSION = "0.05";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -34,6 +36,9 @@ public class Main extends ABFrame {
     private Camera cam;
     
     public static void main(String[] args) {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Screen.WIDTH = (int) (screenSize.width * 0.999);
+        Screen.HEIGHT = (int) (screenSize.height * 0.999) - 35;
         new Main(60, "", true, true, 1.0f, Screen.WIDTH, Screen.HEIGHT, 1, 
             false).start();
     }
@@ -59,10 +64,10 @@ public class Main extends ABFrame {
         w.addEntity(cam);
         cam.hide();
         
-        Sprite testSprite = new Sprite(0, 0, 2<<Screen.SHIFT, 2<<Screen.SHIFT, 2 + 0 * sheet.width, 1000, sheet, w) {
+        Sprite testSprite = new Sprite(0, -120, 2<<Screen.SHIFT, 2<<Screen.SHIFT, 2 + 0 * sheet.width, 1000, w) {
             @Override
             protected void tick() {
-                this.maxSpeed = 20;
+                this.maxSpeed = 80;
                 if (k.w.isPressed()) thrustUp();
                 else if (k.s.isPressed()) thrustDown();
                 if (k.a.isPressed()) thrustLeft();
@@ -86,8 +91,8 @@ public class Main extends ABFrame {
         
         int len = 200;
         for (int i = 0; i < len; i++) {
-            Sprite sprite = new Sprite(Statc.intRandom(-100, 100), 
-                Statc.intRandom(-100, 100), 8, 8, 4 + 0 * sheet.width, 10, sheet, w) {
+            Sprite sprite = new Sprite(Statc.intRandom(-1000, 1000), 
+                Statc.intRandom(-1000, 1000), 8, 8, 4 + 0 * sheet.width, 10, w) {
                 @Override
                 protected void tick() {
 
