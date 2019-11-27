@@ -6,6 +6,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.world.World;
+import youretheyoinkreboot.world.particles.Particle;
 
 /**
  *
@@ -54,7 +55,7 @@ public abstract class Entity {
     
     public void superTick() {
         tick();
-        move();
+        if (isMoving()) move();
     }
     
     public void superRender(Screen s) {
@@ -75,22 +76,23 @@ public abstract class Entity {
         bounds.x = x;
         bounds.y = y;
         
-        for (Entity e : w.getEntities()) {
-            if (e != this && e.active && this.intersects(e) && e.collides() && collides()) {
-                x = oldx;
-                y = oldy;
-                e.vx += Math.floor(vx);
-                e.vy += Math.floor(vy);
-                vx = Math.floor(-(vx/2));
-                vy = Math.floor(-(vy/2));
-                
-                
-                bounds.x = x;
-                bounds.y = y;
+        if (collides()) {
+            for (Entity e : w.getEntities()) {
+                if (e != this && e.active && this.intersects(e) && e.collides()) {
+                    x = oldx;
+                    y = oldy;
+                    e.vx += Math.floor(vx);
+                    e.vy += Math.floor(vy);
+                    vx = Math.floor(-(vx / 2));
+                    vy = Math.floor(-(vy / 2));
+
+                    bounds.x = x;
+                    bounds.y = y;
+                }
             }
         }
-        
-        moving = Math.abs(vx) > 0 || Math.abs(vy) > 0;
+
+        moving = isMoving();
         
         if (isCameraTarget()) cam.updateScreen();
         
@@ -123,32 +125,25 @@ public abstract class Entity {
     }
     
     private void thrustParticles(int x, int y) {
-            for (int i = 0; i < 3; i++) {
-            Sprite sp = new Sprite((x) + (int) vx, 
-                (y) + (int) vy, 8, 8, 
-                4 + 1 * w.getScreen().sheet.width, 1, w) {
+        for (int i = 0; i < 4; i++) {
+            Particle p = new Particle(
+                    (byte) 1,
+                    Statc.intRandom(50, 600),
+                    (x),
+                    (y),
+                    4 + 1 * w.getScreen().sheet.width, w) {
                 @Override
-                protected void tick() {
-                    mirrorDir = Statc.intRandom(0, Screen.BIT_MIRROR_Y);
-                }
+                protected void tick() {}
 
                 @Override
                 protected void render(Screen s) {
-
+                    mirrorDir = Statc.intRandom(0, Screen.BIT_MIRROR_Y);
                 }
             };
-            sp.noClip();
-            sp.vx = vx;
-            sp.vy = vy;
-            w.addEntity(sp);
-
-            Timer t = new Timer();
-            t.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    sp.active = false;
-                }
-            }, Statc.intRandom(100, 500));
+            
+            p.vx = vx;
+            p.vy = vy;
+            w.addParticle(p);
         }
     }
     
@@ -217,7 +212,11 @@ public abstract class Entity {
     }
     
     public boolean isMoving() {
-        return moving;
+        return getVelocity() != 0;
+    }
+    
+    public double getVelocity() {
+        return Math.hypot(vx, vy);
     }
     
     public void setCameraTarget(boolean val, Camera cam) {

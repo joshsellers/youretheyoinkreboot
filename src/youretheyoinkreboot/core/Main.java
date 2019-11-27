@@ -2,6 +2,7 @@ package youretheyoinkreboot.core;
 
 import com.amp.mathem.Statc;
 import com.amp.pre.ABFrame;
+import com.sun.glass.events.KeyEvent;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
@@ -9,7 +10,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.core.gfx.SpriteSheet;
+import youretheyoinkreboot.ui.UIControl;
+import youretheyoinkreboot.ui.UITextLabel;
 import youretheyoinkreboot.util.Key;
+import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.Camera;
 import youretheyoinkreboot.world.entities.Sprite;
@@ -18,9 +22,9 @@ import youretheyoinkreboot.world.entities.Sprite;
  *
  * @author josh
  */
-public class Main extends ABFrame {
+public class Main extends ABFrame implements KeyToggleListener {
     
-    public final static String VERSION = "0.05";
+    public final static String VERSION = "0.06";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -34,6 +38,11 @@ public class Main extends ABFrame {
     private World w;
     
     private Camera cam;
+    
+    private UITextLabel fpsMeter;
+    private UITextLabel camCoords;
+    
+    private boolean showDebug;
     
     public static void main(String[] args) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -57,6 +66,7 @@ public class Main extends ABFrame {
         
         k = new Key();
         f.addKeyListener(k);
+        k.addKeyToggleListener(this);
         
         w = new World(s);
         
@@ -67,7 +77,7 @@ public class Main extends ABFrame {
         Sprite testSprite = new Sprite(0, -120, 2<<Screen.SHIFT, 2<<Screen.SHIFT, 2 + 0 * sheet.width, 1000, w) {
             @Override
             protected void tick() {
-                this.maxSpeed = 80;
+                this.maxSpeed = 100;
                 if (k.w.isPressed()) thrustUp();
                 else if (k.s.isPressed()) thrustDown();
                 if (k.a.isPressed()) thrustLeft();
@@ -89,10 +99,10 @@ public class Main extends ABFrame {
         testSprite.show();
         cam.track(testSprite);
         
-        int len = 200;
+        int len = 1250;
         for (int i = 0; i < len; i++) {
-            Sprite sprite = new Sprite(Statc.intRandom(-1000, 1000), 
-                Statc.intRandom(-1000, 1000), 8, 8, 4 + 0 * sheet.width, 10, w) {
+            Sprite sprite = new Sprite(Statc.intRandom(-10, 10), 
+                Statc.intRandom(-10, 10), 8, 8, 4 + 0 * sheet.width, 10, w) {
                 @Override
                 protected void tick() {
 
@@ -108,6 +118,11 @@ public class Main extends ABFrame {
             sprite.enableCollision();
         }
         testSprite.enableCollision();
+        
+        fpsMeter = new UITextLabel(fps, 10, 20);
+        UIControl.addUIObject(fpsMeter);
+        camCoords = new UITextLabel("CAM X: " + cam.getX() + " CAM Y: " + cam.getY(), 10, 32);
+        UIControl.addUIObject(camCoords);
     }
 
     @Override
@@ -115,6 +130,8 @@ public class Main extends ABFrame {
         f.requestFocusInWindow();
         
         w.tick();
+        
+        UIControl.tick();
     }
 
     @Override
@@ -131,8 +148,23 @@ public class Main extends ABFrame {
         }
         
         Graphics g = image.getGraphics();
-        //UI
+        if (showDebug) {
+            fpsMeter.show();
+            camCoords.show();
+        }
+        else {
+            fpsMeter.hide();
+            camCoords.hide();
+        }
+        fpsMeter.setText(fps + " FPS");
+        camCoords.setText("CAM X: " + cam.getX() + " CAM Y: " + cam.getY());
+        UIControl.draw(g);
         grphcs.drawImage(image, 0, 0, f.getWidth(), f.getHeight(), f);
+    }
+
+    @Override
+    public void keyToggled(int keyCode) {
+        if (keyCode == KeyEvent.VK_F3) showDebug = !showDebug;
     }
     
 }

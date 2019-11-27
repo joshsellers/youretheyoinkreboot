@@ -7,6 +7,8 @@ import java.util.List;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.core.gfx.SpriteSheet;
 import youretheyoinkreboot.world.entities.Entity;
+import youretheyoinkreboot.world.particles.Particle;
+import youretheyoinkreboot.world.particles.ParticleHandler;
 
 /**
  *
@@ -20,30 +22,37 @@ public class World {
     private int[] oldBackground;
     private int[] background;
     
+    private ParticleHandler ph;
+    
     public World(Screen s) {
         this.s = s;
         generateBackground(s);
+        ph = new ParticleHandler(this);
     }
     
     public void tick() {
         try {
-        getEntities().stream().filter((e) -> (e.isActive())).forEach((e) -> {
-            e.superTick();
-        }); 
+            getEntities().stream().filter((e) -> (e.isActive())).forEach((e) -> {
+                e.superTick();
+            });
         } catch (java.util.ConcurrentModificationException ex) {
-            
+            System.out.println(ex.toString());
         }
+
+        ph.tick();
     }
-    
+
     public void render(Screen s) {
         drawBackground(s.getXOffset(), s.getYOffset(), s);
-        try { 
-        getEntities().stream().filter((e) -> (e.isActive())).forEach((e) -> {
-            e.superRender(s);
-        }); 
+        try {
+            getEntities().stream().filter((e) -> (e.isActive())).forEach((e) -> {
+                e.superRender(s);
+            });
         } catch (java.util.ConcurrentModificationException ex) {
-            
+            System.out.println(ex.toString());
         }
+
+        ph.render(s);
     }
     
     private void drawBackground(int xa, int ya, Screen s) {
@@ -60,7 +69,7 @@ public class World {
     private int lastxo = 0;
     private int lastyo = 0;
     private final int padding = 2;
-    private final int starProb = 1000;
+    private final int starProb = 10000;
     private void moveBackground(Screen s) {
         oldBackground = background;
         
@@ -153,5 +162,13 @@ public class World {
     
     public Screen getScreen() {
         return s;
+    }
+    
+    public void addParticle(Particle p) {
+        this.getParticleHandler().addParticle(p);
+    }
+    
+    public ParticleHandler getParticleHandler() {
+        return ph;
     }
 }
