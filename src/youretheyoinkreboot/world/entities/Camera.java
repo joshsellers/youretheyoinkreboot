@@ -20,6 +20,7 @@ public class Camera extends Entity {
     public Camera(int x, int y, Screen s, World w) {
         super(x, y, 1, 1, 0, w);
         this.s = s;
+        noClip();
     }
 
     @Override
@@ -35,20 +36,6 @@ public class Camera extends Entity {
                 
             }
         }
-        
-        int xOffset = SpriteSheet.TILE_SIZE;
-        int yOffset = SpriteSheet.TILE_SIZE;
-        if (target != null && !trackWASD) {
-            xOffset = target.getWidth() / 2;
-            yOffset = target.getHeight() / 2;
-            if (target.isMoving()) {
-                xOffset -= target.vx;
-                yOffset -= target.vy;
-            }
-        }
-        
-        s.setOffset(x - ((Screen.WIDTH / Screen.SCALE) / 2) + (int)((float)xOffset*1.5), 
-                y - ((Screen.HEIGHT / Screen.SCALE) / 2) + (int)((float)yOffset*1.5));
     }
 
     @Override
@@ -56,16 +43,36 @@ public class Camera extends Entity {
         s.render(x, y, 6, 0, 0, 1);
     }
     
+    public void updateScreen() {
+        double xOffset = SpriteSheet.TILE_SIZE;
+        double yOffset = SpriteSheet.TILE_SIZE;
+        if (target != null && !trackWASD) {
+            xOffset = -target.getWidth() / 2;
+            yOffset = -target.getHeight() / 2;
+            if (target.isMoving()) {
+                xOffset -= target.vx;
+                yOffset -= target.vy;
+            }
+        }
+        
+        s.setOffset(x - ((Screen.WIDTH / Screen.SCALE) / 2) - (int)(xOffset), 
+            y - ((Screen.HEIGHT / Screen.SCALE) / 2) - (int)(yOffset));
+    }
+    
     public void track(Entity e) {
         target = e;
         tracking = true;
         trackWASD = false;
+        
+        target.setCameraTarget(true, this);
     }
     
     public void trackWASD(Key k) {
         this.k = k;
         tracking = true;
         trackWASD = true;
+        
+        if (target != null) target.setCameraTarget(false, null);
     }
     
     public boolean isTracking() {
@@ -76,12 +83,14 @@ public class Camera extends Entity {
         this.x = x;
         this.y = y;
         tracking = true;
-        trackWASD = false;
+        trackWASD = false;        
     }
     
     public void stopTracking() {
         tracking = false;
         trackWASD = false;
+        
+        if (target != null) target.setCameraTarget(false, null);
     }
     
     public Key getKeyInterface() {

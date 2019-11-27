@@ -33,6 +33,13 @@ public abstract class Sprite extends Entity {
     @Override
     public void superRender(Screen s) {
         if (isVisible()) {
+            int rx = x;
+            int ry = y;
+            if (isCameraTarget()) {
+                rx = s.getXOffset() + ((Screen.WIDTH / Screen.SCALE) / 2) - (this.getWidth() / 2);
+                ry = s.getYOffset() + ((Screen.HEIGHT / Screen.SCALE) / 2) - (this.getHeight() / 2);
+            }
+            
             int w = this.getWidth() / SpriteSheet.TILE_SIZE;
             int h = this.getHeight() / SpriteSheet.TILE_SIZE;
             for (int ya = 0; ya < h; ya++) {
@@ -40,7 +47,7 @@ public abstract class Sprite extends Entity {
                     int xOffset = xa * SpriteSheet.TILE_SIZE;
                     int yOffset = ya * SpriteSheet.TILE_SIZE;
                     int tile = tiles[xa + ya * w];
-                    s.render(x + xOffset, y + yOffset, tile, 0, 0, 1);
+                    s.render(rx + xOffset, ry + yOffset, tile, 0, 0, 1);
                 }
             }
             

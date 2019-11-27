@@ -13,11 +13,11 @@ public abstract class Entity {
     protected World w;
     
     protected int x, y;
-    protected float vx, vy;
+    protected double vx, vy;
     
     protected int width, height;
     
-    protected Rectangle bounds = new Rectangle(x, y, width, height);
+    protected Rectangle bounds;
     
     protected boolean active = true;
     
@@ -29,8 +29,12 @@ public abstract class Entity {
     protected boolean show = true;
     
     protected int maxSpeed;
+    protected double acc = 1;
     
     protected boolean moving;
+    
+    protected boolean camTarget = false;
+    protected Camera cam = null;
     
     public Entity(int x, int y, int width, int height, int maxHitPoints, World w) {
         this.x = x;
@@ -41,13 +45,13 @@ public abstract class Entity {
         this.w = w;
         
         hp = maxHitPoints;
+        
+        bounds = new Rectangle(x, y, width, height);
     }
     
     public void superTick() {
         tick();
         move();
-        bounds.x = x;
-        bounds.y = y;
     }
     
     public void superRender(Screen s) {
@@ -65,16 +69,49 @@ public abstract class Entity {
         x += vx;
         y += vy;
         
+        bounds.x = x;
+        bounds.y = y;
+        
         for (Entity e : w.getEntities()) {
-            if (e != this && e.active && this.intersects(e)) {
+            if (e != this && e.active && this.intersects(e) && e.collides()) {
                 x = oldx;
                 y = oldy;
-                vx = (-vx / 2);
-                vy = (-vy / 2);
+                e.vx += Math.floor(vx);
+                e.vy += Math.floor(vy);
+                vx = Math.floor(-(vx/2));
+                vy = Math.floor(-(vy/2));
+                
+                
+                bounds.x = x;
+                bounds.y = y;
             }
         }
         
         moving = Math.abs(vx) > 0 || Math.abs(vy) > 0;
+        
+        if (isCameraTarget()) cam.updateScreen();
+        
+        float drag = 0.5f;
+        if (vx > 0) vx -= drag;
+        else if (vx < 0) vx += drag;
+        if (vy > 0) vy -= drag;
+        else if (vy < 0) vy += drag;
+    }
+    
+    protected void thrustUp() {
+        if (vy > -maxSpeed) vy -= acc;
+    }
+    
+    protected void thrustDown() {
+        if (vy < maxSpeed) vy += acc;
+    }
+    
+    protected void thrustLeft() {
+        if (vx > -maxSpeed) vx -= acc;
+    }
+    
+    protected void thrustRight() {
+        if (vx < maxSpeed) vx += acc;
     }
     
     public int getX() {
@@ -143,5 +180,25 @@ public abstract class Entity {
     
     public boolean isMoving() {
         return moving;
+    }
+    
+    public void setCameraTarget(boolean val, Camera cam) {
+        camTarget = val;
+        if (cam != null && camTarget) this.cam = cam;
+        else {
+            this.cam = null;
+            camTarget = false;
+        }
+    }
+    
+    public boolean isCameraTarget() {
+        return camTarget;
+    }
+    
+    public Camera getCamera() {
+        if (isCameraTarget()) {
+            return cam;
+        }
+        return null;
     }
 }

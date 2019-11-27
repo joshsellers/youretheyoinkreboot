@@ -18,7 +18,7 @@ import youretheyoinkreboot.world.entities.Sprite;
  */
 public class Main extends ABFrame {
     
-    public final static String VERSION = "0.03";
+    public final static String VERSION = "0.04";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -62,11 +62,11 @@ public class Main extends ABFrame {
         Sprite testSprite = new Sprite(0, 0, 2<<Screen.SHIFT, 2<<Screen.SHIFT, 2 + 0 * sheet.width, 1000, sheet, w) {
             @Override
             protected void tick() {
-                maxSpeed = 20;
-                if (k.w.isPressed() && vy > -maxSpeed) vy--;
-                else if (k.s.isPressed() && vy < maxSpeed) vy++;
-                else if (k.a.isPressed() && vx > -maxSpeed) vx--;
-                else if (k.d.isPressed() && vx < maxSpeed) vx++;
+                this.maxSpeed = 20;
+                if (k.w.isPressed()) thrustUp();
+                else if (k.s.isPressed()) thrustDown();
+                if (k.a.isPressed()) thrustLeft();
+                else if (k.d.isPressed()) thrustRight();
                 if (k.b.isPressed()) {
                     if (vx > 0) vx--;
                     else if (vx < 0) vx++;
@@ -84,10 +84,10 @@ public class Main extends ABFrame {
         testSprite.show();
         cam.track(testSprite);
         
-        int len = 600;
+        int len = 200;
         for (int i = 0; i < len; i++) {
-            Sprite sprite = new Sprite(Statc.intRandom(-10000, 10000), 
-                Statc.intRandom(-10000, 10000), 8, 8, 4 + 0 * sheet.width, 10, sheet, w) {
+            Sprite sprite = new Sprite(Statc.intRandom(-100, 100), 
+                Statc.intRandom(-100, 100), 8, 8, 4 + 0 * sheet.width, 10, sheet, w) {
                 @Override
                 protected void tick() {
 
