@@ -19,7 +19,7 @@ public abstract class Particle extends Sprite {
     protected long lifeTime = 0;
     
     public Particle(byte id, long lifeTime, int x, int y, int tile, World world) {
-        super(x, y, SpriteSheet.TILE_SIZE, SpriteSheet.TILE_SIZE, tile, 1, world);
+        super(x, y, SpriteSheet.TILE_SIZE, SpriteSheet.TILE_SIZE, tile, world);
         
         this.id = id;
         this.lifeTime = lifeTime;

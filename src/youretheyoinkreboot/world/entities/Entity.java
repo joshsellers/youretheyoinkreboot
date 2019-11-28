@@ -33,7 +33,10 @@ public abstract class Entity {
     protected boolean show = true;
     
     protected int maxSpeed;
-    protected double acc = 1;
+    protected double acc = 1d;
+    protected double accMod = acc;
+    protected float drag = 0.5f;
+    protected float resistance = 1;
     
     protected boolean moving;
     
@@ -81,10 +84,12 @@ public abstract class Entity {
                 if (e != this && e.active && this.intersects(e) && e.collides()) {
                     x = oldx;
                     y = oldy;
-                    e.vx += Math.floor(vx);
-                    e.vy += Math.floor(vy);
-                    vx = Math.floor(-(vx / 2));
-                    vy = Math.floor(-(vy / 2));
+                    if (e.resistance < this.resistance) {
+                        e.vx += Math.floor(vx/e.resistance);
+                        e.vy += Math.floor(vy/e.resistance);
+                    }
+                    vx = Math.floor(-((vx / (2*resistance))));
+                    vy = Math.floor(-((vy / (2*resistance))));
 
                     bounds.x = x;
                     bounds.y = y;
@@ -96,7 +101,6 @@ public abstract class Entity {
         
         if (isCameraTarget()) cam.updateScreen();
         
-        float drag = 0.5f;
         if (vx > 0) vx -= drag;
         else if (vx < 0) vx += drag;
         if (vy > 0) vy -= drag;
@@ -104,47 +108,45 @@ public abstract class Entity {
     }
     
     protected void thrustUp() {
-        if (vy > -maxSpeed) vy -= acc;
-        thrustParticles(x + Statc.intRandom(-2, width/2), y + height);
+        if (vy > -maxSpeed) vy -= accMod;
+        thrustParticles(x + Statc.intRandom(0, width), y + Statc.intRandom(0, height));
     }
     
     protected void thrustDown() {
-        if (vy < maxSpeed) vy += acc;
-        thrustParticles(x + Statc.intRandom(-2, width/2), y);
+        if (vy < maxSpeed) vy += accMod;
+        thrustParticles(x + Statc.intRandom(0, width), y + Statc.intRandom(0, height));
     }
     
     protected void thrustLeft() {
-        if (vx > -maxSpeed) vx -= acc;
-        thrustParticles(x + width, y + Statc.intRandom(-2, height/2));
+        if (vx > -maxSpeed) vx -= accMod;
+        thrustParticles(x + Statc.intRandom(0, width), y + Statc.intRandom(0, height));
     }
     
     protected void thrustRight() {
-        if (vx < maxSpeed) vx += acc;
-        thrustParticles(x, y + Statc.intRandom(-2, height/2));
+        if (vx < maxSpeed) vx += accMod;
+        thrustParticles(x + Statc.intRandom(0, width), y + Statc.intRandom(0, height));
         
     }
     
     private void thrustParticles(int x, int y) {
-        for (int i = 0; i < 4; i++) {
-            Particle p = new Particle(
-                    (byte) 1,
-                    Statc.intRandom(50, 600),
-                    (x),
-                    (y),
-                    4 + 1 * w.getScreen().sheet.width, w) {
-                @Override
-                protected void tick() {}
+        Particle p = new Particle(
+                (byte) 1,
+                Statc.intRandom(50, 600),
+                (x)-4,
+                (y)-4,
+                4 + 1 * w.getScreen().sheet.width, w) {
+            @Override
+            protected void tick() {}
 
-                @Override
-                protected void render(Screen s) {
-                    mirrorDir = Statc.intRandom(0, Screen.BIT_MIRROR_Y);
-                }
-            };
-            
-            p.vx = vx;
-            p.vy = vy;
-            w.addParticle(p);
-        }
+            @Override
+            protected void render(Screen s) {
+                mirrorDir = Statc.intRandom(0, Screen.BIT_MIRROR_Y);
+            }
+        };
+
+        p.vx = vx;
+        p.vy = vy;
+        w.addParticle(p);
     }
     
     public int getX() {

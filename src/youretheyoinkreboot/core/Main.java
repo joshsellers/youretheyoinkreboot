@@ -15,7 +15,9 @@ import youretheyoinkreboot.ui.UITextLabel;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.world.World;
+import youretheyoinkreboot.world.entities.AnimatedSprite;
 import youretheyoinkreboot.world.entities.Camera;
+import youretheyoinkreboot.world.entities.Player;
 import youretheyoinkreboot.world.entities.Sprite;
 
 /**
@@ -24,7 +26,7 @@ import youretheyoinkreboot.world.entities.Sprite;
  */
 public class Main extends ABFrame implements KeyToggleListener {
     
-    public final static String VERSION = "0.06";
+    public final static String VERSION = "0.07";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -36,11 +38,12 @@ public class Main extends ABFrame implements KeyToggleListener {
     private Key k;
     
     private World w;
-    
     private Camera cam;
+    private Player p;
     
     private UITextLabel fpsMeter;
     private UITextLabel camCoords;
+    private UITextLabel playerInfo;
     
     private boolean showDebug;
     
@@ -74,38 +77,18 @@ public class Main extends ABFrame implements KeyToggleListener {
         w.addEntity(cam);
         cam.hide();
         
-        Sprite testSprite = new Sprite(0, -120, 2<<Screen.SHIFT, 2<<Screen.SHIFT, 2 + 0 * sheet.width, 1000, w) {
-            @Override
-            protected void tick() {
-                this.maxSpeed = 100;
-                if (k.w.isPressed()) thrustUp();
-                else if (k.s.isPressed()) thrustDown();
-                if (k.a.isPressed()) thrustLeft();
-                else if (k.d.isPressed()) thrustRight();
-                if (k.b.isPressed()) {
-                    if (vx > 0) vx--;
-                    else if (vx < 0) vx++;
-                    if (vy > 0) vy--;
-                    else if (vy < 0) vy++;
-                } 
-            }
-
-            @Override
-            protected void render(Screen s) {
-                
-            }
-        };
-        w.addEntity(testSprite);
-        testSprite.show();
-        cam.track(testSprite);
+        p = new Player(0, 0, k, w);
+        p.enableCollision();
+        w.addEntity(p);
+        cam.track(p);
         
-        int len = 1250;
+        int len = 400;
         for (int i = 0; i < len; i++) {
-            Sprite sprite = new Sprite(Statc.intRandom(-10, 10), 
-                Statc.intRandom(-10, 10), 8, 8, 4 + 0 * sheet.width, 10, w) {
+            Sprite sprite = new Sprite(Statc.intRandom(-1000, 1000), 
+                Statc.intRandom(-1000, 1000), 8, 8, 4 + 0 * sheet.width, w) {
                 @Override
                 protected void tick() {
-
+                    this.resistance = 1f;
                 }
 
                 @Override
@@ -117,12 +100,13 @@ public class Main extends ABFrame implements KeyToggleListener {
             w.addEntity(sprite);
             sprite.enableCollision();
         }
-        testSprite.enableCollision();
         
         fpsMeter = new UITextLabel(fps, 10, 20);
         UIControl.addUIObject(fpsMeter);
         camCoords = new UITextLabel("CAM X: " + cam.getX() + " CAM Y: " + cam.getY(), 10, 32);
         UIControl.addUIObject(camCoords);
+        playerInfo = new UITextLabel("player", 10, 44);
+        UIControl.addUIObject(playerInfo);
     }
 
     @Override
@@ -151,13 +135,16 @@ public class Main extends ABFrame implements KeyToggleListener {
         if (showDebug) {
             fpsMeter.show();
             camCoords.show();
+            playerInfo.show();
         }
         else {
             fpsMeter.hide();
             camCoords.hide();
+            playerInfo.hide();
         }
         fpsMeter.setText(fps + " FPS");
-        camCoords.setText("CAM X: " + cam.getX() + " CAM Y: " + cam.getY());
+        camCoords.setText("CAM X: " + cam.getX() + " Y: " + cam.getY());
+        playerInfo.setText("PLAYER X: " + p.getX() + " Y: " + p.getY() + " VELOCITY: " + p.getVelocity());
         UIControl.draw(g);
         grphcs.drawImage(image, 0, 0, f.getWidth(), f.getHeight(), f);
     }
