@@ -14,11 +14,13 @@ import youretheyoinkreboot.ui.UIControl;
 import youretheyoinkreboot.ui.UITextLabel;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
+import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.AnimatedSprite;
 import youretheyoinkreboot.world.entities.Camera;
 import youretheyoinkreboot.world.entities.Player;
 import youretheyoinkreboot.world.entities.Sprite;
+import youretheyoinkreboot.world.particles.Particle;
 
 /**
  *
@@ -26,7 +28,7 @@ import youretheyoinkreboot.world.entities.Sprite;
  */
 public class Main extends ABFrame implements KeyToggleListener {
     
-    public final static String VERSION = "0.07";
+    public final static String VERSION = "0.08";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -36,6 +38,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     private final int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 
     private Key k;
+    private Mouse m;
     
     private World w;
     private Camera cam;
@@ -70,6 +73,9 @@ public class Main extends ABFrame implements KeyToggleListener {
         k = new Key();
         f.addKeyListener(k);
         k.addKeyToggleListener(this);
+        m = new Mouse(s);
+        c.addMouseListener(m);
+        c.addMouseMotionListener(m);
         
         w = new World(s);
         
@@ -81,6 +87,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         p.enableCollision();
         w.addEntity(p);
         cam.track(p);
+        cam.updateScreen();
         
         int len = 400;
         for (int i = 0; i < len; i++) {

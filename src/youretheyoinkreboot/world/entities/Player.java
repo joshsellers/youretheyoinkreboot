@@ -9,7 +9,9 @@ import youretheyoinkreboot.world.World;
  * @author josh
  */
 public class Player extends AnimatedSprite {
-    
+    //TODO add class Yoink with code handling multiple sets of sprite frames for
+    //different movingdirs
+    //will extending AnimatedSprite, player will extend yoink
     private Key k;
     
     private int movingDir;
@@ -27,7 +29,7 @@ public class Player extends AnimatedSprite {
 
         this.k = k;
         
-        this.maxSpeed = 5;
+        this.maxSpeed = 6;
         this.maxHitPoints = 50;
         this.resistance = 2;
     }
@@ -44,13 +46,17 @@ public class Player extends AnimatedSprite {
         else if (k.a.isPressed()) movingDir = 7;
         else if (k.d.isPressed()) movingDir = 3;
         
-        //if (movingDir % 2 == 0) accMod = acc/2;
-        //else accMod = acc;
-        
         if (k.w.isPressed()) thrustUp();
         else if (k.s.isPressed()) thrustDown();
         if (k.a.isPressed()) thrustLeft();
         else if (k.d.isPressed()) thrustRight();
+        
+        while (getVelocity() > maxSpeed) {
+            if (vx > 0) vx--;
+            else if (vx < 0) vx++;
+            if (vy > 0) vy--;
+            else if (vy < 0) vy++;
+        }
         
         if (k.b.isPressed()) {
             if (vx > 0) {
