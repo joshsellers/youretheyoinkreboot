@@ -22,7 +22,7 @@ public class World {
     private int[] oldBackground;
     private int[] background;
     
-    private ParticleHandler ph;
+    private final ParticleHandler ph;
     
     public World(Screen s) {
         this.s = s;

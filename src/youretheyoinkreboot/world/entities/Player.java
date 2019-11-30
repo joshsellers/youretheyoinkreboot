@@ -1,33 +1,24 @@
 package youretheyoinkreboot.world.entities;
 
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.util.Key;
+import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.world.World;
 
 /**
  *
  * @author josh
  */
-public class Player extends AnimatedSprite {
-    //TODO add class Yoink with code handling multiple sets of sprite frames for
-    //different movingdirs
-    //will extending AnimatedSprite, player will extend yoink
+public class Player extends Yoink implements KeyToggleListener {
     private Key k;
-    
-    private int movingDir;
 
     public Player(int x, int y, Key k, World world) {
-        super(x, y, 16, 16, new int[] {
-            0 + 2 * world.getScreen().sheet.width, 
-            2 + 2 * world.getScreen().sheet.width, 
-            4 + 2 * world.getScreen().sheet.width,
-            6 + 2 * world.getScreen().sheet.width, 
-            8 + 2 * world.getScreen().sheet.width, 
-            10 + 2 * world.getScreen().sheet.width,
-            12 + 2 * world.getScreen().sheet.width
-        }, 125, world);
+        super(x, y, 16, world);
 
         this.k = k;
+        k.addKeyToggleListener(this);
         
         this.maxSpeed = 6;
         this.maxHitPoints = 50;
@@ -71,10 +62,16 @@ public class Player extends AnimatedSprite {
             }
         }
     }
+    
+    public void drawUI(Graphics g) {
+        
+    }
 
     @Override
-    protected void draw(Screen s) {
-        
+    public void keyToggled(int keyCode) {
+        if (keyCode == k.e.keyCode) {
+            inv.useItem(inv.getEquipped()[0]);
+        }
     }
     
 }

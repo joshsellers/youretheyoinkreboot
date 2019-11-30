@@ -35,6 +35,9 @@ public abstract class Entity {
     protected int maxSpeed;
     protected double acc = 1d;
     protected double accMod = acc;
+    
+    protected int shield = 0;
+    
     protected float drag = 0.5f;
     protected float resistance = 1;
     
@@ -93,6 +96,8 @@ public abstract class Entity {
 
                     bounds.x = x;
                     bounds.y = y;
+                    
+                    e.onCollision(this);
                 }
             }
         }
@@ -105,6 +110,10 @@ public abstract class Entity {
         else if (vx < 0) vx += drag;
         if (vy > 0) vy -= drag;
         else if (vy < 0) vy += drag;
+    }
+    
+    protected void onCollision(Entity with) {
+        
     }
     
     protected void thrustUp() {
@@ -147,6 +156,35 @@ public abstract class Entity {
         p.vx = vx;
         p.vy = vy;
         w.addParticle(p);
+    }
+    
+    public void damage(int damage) {
+        int net = damage;
+        if (shield > 0) net -= (damage / shield);
+        
+        if (hp - net < 0) hp = 0;
+        else hp -= net;
+        
+        if (hp == 0) active = false;
+        
+        for (int i = 0; i < String.valueOf(net).length(); i++) {
+            Particle p = new Particle((byte)1, 500, x + (8*i) - (width / 2), y - 10, (5+(Integer.parseInt("" + String.valueOf(net).toCharArray()[i]))) + 0 * 32, w) {
+                @Override
+                protected void tick() {
+
+                }
+
+                @Override
+                protected void render(Screen s) {
+
+                }
+                
+            };
+            p.vx = vx;
+            p.vy = vy;
+            p.hue = 0xEEA000;
+            w.addParticle(p);
+        }
     }
     
     public int getX() {
@@ -239,5 +277,10 @@ public abstract class Entity {
             return cam;
         }
         return null;
+    }
+    
+    public void setMaxHitPoints(int val) {
+        if (hp == maxHitPoints) hp = val;
+        this.maxHitPoints = val;
     }
 }

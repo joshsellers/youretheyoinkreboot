@@ -2,14 +2,15 @@ package youretheyoinkreboot.core;
 
 import com.amp.mathem.Statc;
 import com.amp.pre.ABFrame;
-import com.sun.glass.events.KeyEvent;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.core.gfx.SpriteSheet;
+import youretheyoinkreboot.ui.InventoryInterface;
 import youretheyoinkreboot.ui.UIControl;
 import youretheyoinkreboot.ui.UITextLabel;
 import youretheyoinkreboot.util.Key;
@@ -18,8 +19,11 @@ import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.AnimatedSprite;
 import youretheyoinkreboot.world.entities.Camera;
+import youretheyoinkreboot.world.entities.Entity;
 import youretheyoinkreboot.world.entities.Player;
 import youretheyoinkreboot.world.entities.Sprite;
+import youretheyoinkreboot.world.entities.Yoink;
+import youretheyoinkreboot.world.items.Item;
 import youretheyoinkreboot.world.particles.Particle;
 
 /**
@@ -28,7 +32,7 @@ import youretheyoinkreboot.world.particles.Particle;
  */
 public class Main extends ABFrame implements KeyToggleListener {
     
-    public final static String VERSION = "0.08";
+    public final static String VERSION = "0.09";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -43,6 +47,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     private World w;
     private Camera cam;
     private Player p;
+    private InventoryInterface ii;
     
     private UITextLabel fpsMeter;
     private UITextLabel camCoords;
@@ -52,8 +57,8 @@ public class Main extends ABFrame implements KeyToggleListener {
     
     public static void main(String[] args) {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Screen.WIDTH = (int) (screenSize.width * 0.999);
-        Screen.HEIGHT = (int) (screenSize.height * 0.999) - 35;
+        Screen.WIDTH = (int) (screenSize.width);
+        Screen.HEIGHT = (int) (screenSize.height) - 35;
         new Main(60, "", true, true, 1.0f, Screen.WIDTH, Screen.HEIGHT, 1, 
             false).start();
     }
@@ -103,6 +108,19 @@ public class Main extends ABFrame implements KeyToggleListener {
 
                 }
                 
+                @Override
+                protected void onCollision(Entity with) {
+                    damage(50);
+                    if (hp == 0) {
+                        if (with instanceof Yoink) {
+                            ((Yoink) with).getInventory().addItem(Item.PURPLEORB.id, 1);
+                            if (Statc.intRandom(0, 50) == 0) {
+                                ((Yoink) with).getInventory().addItem(Item.RAINBOWSHARD.id, 1);
+                            }
+                        }
+                    }
+                }
+                
             };
             w.addEntity(sprite);
             sprite.enableCollision();
@@ -114,6 +132,10 @@ public class Main extends ABFrame implements KeyToggleListener {
         UIControl.addUIObject(camCoords);
         playerInfo = new UITextLabel("player", 10, 44);
         UIControl.addUIObject(playerInfo);
+        
+        ii = new InventoryInterface(10, 10, p.getInventory(), m);
+        ii.hide();
+        UIControl.addUIObject(ii);
     }
 
     @Override
@@ -139,6 +161,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         }
         
         Graphics g = image.getGraphics();
+        
         if (showDebug) {
             fpsMeter.show();
             camCoords.show();
@@ -151,7 +174,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         }
         fpsMeter.setText(fps + " FPS");
         camCoords.setText("CAM X: " + cam.getX() + " Y: " + cam.getY());
-        playerInfo.setText("PLAYER X: " + p.getX() + " Y: " + p.getY() + " VELOCITY: " + p.getVelocity());
+        playerInfo.setText("PLAYER X: " + p.getX() + " Y: " + p.getY() + " VELOCITY: " + ((int) p.getVelocity()));
         UIControl.draw(g);
         grphcs.drawImage(image, 0, 0, f.getWidth(), f.getHeight(), f);
     }
@@ -159,6 +182,9 @@ public class Main extends ABFrame implements KeyToggleListener {
     @Override
     public void keyToggled(int keyCode) {
         if (keyCode == KeyEvent.VK_F3) showDebug = !showDebug;
+        if (keyCode == k.i.keyCode) {
+            ii.toggle();
+        }
     }
     
 }

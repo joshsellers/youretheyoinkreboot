@@ -14,7 +14,7 @@ public abstract class AnimatedSprite extends Sprite {
     
     private int currentFrame;
     private long lastIterationTime;
-    private int animationSwitchDelay;;
+    protected int animationSpeed;;
     
     protected boolean animate = true;
     
@@ -34,12 +34,12 @@ public abstract class AnimatedSprite extends Sprite {
         }
         
         this.lastIterationTime = System.currentTimeMillis();
-        this.animationSwitchDelay = animSpeed;
+        this.animationSpeed = animSpeed;
     }
     
     @Override
     protected void render(Screen s) {
-        if (isAnimating() && (System.currentTimeMillis() - lastIterationTime) >= (animationSwitchDelay)) {
+        if (isAnimating() && (System.currentTimeMillis() - lastIterationTime) >= (animationSpeed)) {
             lastIterationTime = System.currentTimeMillis();
             currentFrame = (currentFrame + 1) % frames.length;
             tiles = frames[currentFrame];

@@ -15,6 +15,7 @@ public abstract class Sprite extends Entity {
     protected int[] tiles;
     
     protected int mirrorDir;
+    protected int hue;
     
     public Sprite(int x, int y, int w, int h, int tile, World world) {
         super(x, y, w, h, 100, world);
@@ -49,7 +50,7 @@ public abstract class Sprite extends Entity {
                     int xOffset = xa * SpriteSheet.TILE_SIZE;
                     int yOffset = ya * SpriteSheet.TILE_SIZE;
                     int tile = tiles[xa + ya * w];
-                    s.render(rx + xOffset, ry + yOffset, tile, mirrorDir, 0, 1);
+                    s.render(rx + xOffset, ry + yOffset, tile, mirrorDir, hue, 1);
                 }
             }
             
