@@ -14,13 +14,13 @@ import youretheyoinkreboot.world.items.Item;
  *
  * @author josh
  */
-public class InventoryInterface extends UIObject {
+public class UIInventoryInterface extends UIObject {
     
     private Inventory source;
     
     private Mouse m;
     
-    public InventoryInterface(int x, int y, Inventory source, Mouse m) {
+    public UIInventoryInterface(int x, int y, Inventory source, Mouse m) {
         super((byte) 0x02, x, y);
         this.source = source;
         this.m = m;

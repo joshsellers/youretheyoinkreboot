@@ -11,6 +11,8 @@ import java.util.List;
 public class UIControl {
     private static final List<UIObject> uiobjects = new ArrayList<>();
     
+    public static final UINotificationDisplay MESSAGE_DISP = new UINotificationDisplay(10, 20);;
+    
     public static void tick() {
         for (UIObject obj : getUIObjects()) {
             if (obj.isActive()) obj.tick();
@@ -21,6 +23,7 @@ public class UIControl {
         for (UIObject obj : getUIObjects()) {
             if (obj.isActive() && obj.isVisible()) obj.draw(g);
         }
+        MESSAGE_DISP.draw(g);
     }
     
     public static synchronized List<UIObject> getUIObjects() {

@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.core.gfx.SpriteSheet;
+import youretheyoinkreboot.ui.UIControl;
 import youretheyoinkreboot.world.entities.Entity;
 import youretheyoinkreboot.world.particles.Particle;
 import youretheyoinkreboot.world.particles.ParticleHandler;
@@ -36,7 +37,7 @@ public class World {
                 e.superTick();
             });
         } catch (java.util.ConcurrentModificationException ex) {
-            System.out.println(ex.toString());
+            UIControl.MESSAGE_DISP.showMessage("ERROR: " + ex.getLocalizedMessage(), 5000);
         }
 
         ph.tick();
@@ -49,7 +50,7 @@ public class World {
                 e.superRender(s);
             });
         } catch (java.util.ConcurrentModificationException ex) {
-            System.out.println(ex.toString());
+            UIControl.MESSAGE_DISP.showMessage("ERROR: " + ex.getLocalizedMessage(), 5000);
         }
 
         ph.render(s);

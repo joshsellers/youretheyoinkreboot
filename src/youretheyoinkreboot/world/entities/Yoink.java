@@ -85,8 +85,18 @@ public abstract class Yoink extends AnimatedSprite {
     
     protected int movingDir;
 
-    public Yoink(int x, int y, int size, World world) {
+    public Yoink(int x, int y, int size, int tileBase, World world) {
         super(x, y, size, size, SPRITE_INDICES[0], 125, world);
+        int baseX = tileBase % sheet.width;
+        int baseY = tileBase / sheet.width;
+        for (int[] SPRITE_INDICES1 : SPRITE_INDICES) {
+            for (int j = 0; j < SPRITE_INDICES1.length; j++) {
+                int tileX = SPRITE_INDICES1[j] % sheet.width;
+                int tileY = SPRITE_INDICES1[j] / sheet.width;
+                SPRITE_INDICES1[j] = (tileX + baseX) + (tileY + baseY) * sheet.width;
+            }
+        }
+        
         int tw = size / SpriteSheet.TILE_SIZE;
         int th = size / SpriteSheet.TILE_SIZE;
         animations = new int[SPRITE_INDICES.length][SPRITE_INDICES[0].length][tw * th];

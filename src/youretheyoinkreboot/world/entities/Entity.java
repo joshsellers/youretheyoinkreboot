@@ -137,6 +137,14 @@ public abstract class Entity {
         
     }
     
+    private void die(Entity source) {
+        active = false;
+        onDie(source);
+    }
+    
+    //optional override
+    protected void onDie(Entity source) {};
+    
     private void thrustParticles(int x, int y) {
         Particle p = new Particle(
                 (byte) 1,
@@ -158,14 +166,14 @@ public abstract class Entity {
         w.addParticle(p);
     }
     
-    public void damage(int damage) {
+    public void damage(int damage, Entity source) {
         int net = damage;
         if (shield > 0) net -= (damage / shield);
         
         if (hp - net < 0) hp = 0;
         else hp -= net;
         
-        if (hp == 0) active = false;
+        if (hp == 0) die(source);
         
         for (int i = 0; i < String.valueOf(net).length(); i++) {
             Particle p = new Particle((byte)1, 500, x + (8*i) - (width / 2), y - 10, (5+(Integer.parseInt("" + String.valueOf(net).toCharArray()[i]))) + 0 * 32, w) {

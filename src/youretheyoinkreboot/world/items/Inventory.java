@@ -1,6 +1,8 @@
 package youretheyoinkreboot.world.items;
 
 import youretheyoinkreboot.world.entities.Yoink;
+import youretheyoinkreboot.ui.UIControl;
+import youretheyoinkreboot.world.entities.Player;
 
 /**
  *
@@ -23,6 +25,8 @@ public class Inventory {
     
     public void addItem(int id, int amount) {
         if (amount > 0) {
+            if (parent instanceof Player) UIControl.MESSAGE_DISP.showMessage("Obtained " + Item.ITEMS[id].name, 5000);
+            
             for (int i = 0; i < INV_SIZE; i++) {
                 if (items[i][0] == id && Item.ITEMS[items[i][0]].stackable) {
                     Item.ITEMS[id].activateHoldEffects(parent);

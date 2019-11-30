@@ -1,8 +1,6 @@
 package youretheyoinkreboot.world.entities;
 
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.world.World;
@@ -15,7 +13,7 @@ public class Player extends Yoink implements KeyToggleListener {
     private Key k;
 
     public Player(int x, int y, Key k, World world) {
-        super(x, y, 16, world);
+        super(x, y, 16, 0, world);
 
         this.k = k;
         k.addKeyToggleListener(this);
