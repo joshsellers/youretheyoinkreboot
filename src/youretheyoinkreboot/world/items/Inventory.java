@@ -25,7 +25,7 @@ public class Inventory {
     
     public void addItem(int id, int amount) {
         if (amount > 0) {
-            if (parent instanceof Player) UIControl.MESSAGE_DISP.showMessage("Obtained " + Item.ITEMS[id].name, 5000);
+            if (parent instanceof Player) UIControl.MSG_DISP.showMessage("Obtained " + Item.ITEMS[id].name, 5000);
             
             for (int i = 0; i < INV_SIZE; i++) {
                 if (items[i][0] == id && Item.ITEMS[items[i][0]].stackable) {
@@ -68,6 +68,7 @@ public class Inventory {
     }
     
     public void useItem(int index) {
+        if (index == -1) return;
         Item.ITEMS[items[index][0]].use(parent);
         if (Item.ITEMS[items[index][0]].type == Item.TYPE_CONSUMABLE) {
             removeItem(items[index][0], 1);

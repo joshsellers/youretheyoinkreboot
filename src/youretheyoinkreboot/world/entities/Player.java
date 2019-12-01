@@ -3,6 +3,7 @@ package youretheyoinkreboot.world.entities;
 import java.awt.Graphics;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
+import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.World;
 
 /**
@@ -10,11 +11,15 @@ import youretheyoinkreboot.world.World;
  * @author josh
  */
 public class Player extends Yoink implements KeyToggleListener {
+    private final static boolean allowMouseTrigger = false;
+    
     private Key k;
+    private Mouse m;
 
-    public Player(int x, int y, Key k, World world) {
-        super(x, y, 16, 0, world);
-
+    public Player(int x, int y, Key k, Mouse m, World world) {
+        super("PLAYER", x, y, 16, 0, world);
+        
+        this.m = m;
         this.k = k;
         k.addKeyToggleListener(this);
         
@@ -59,6 +64,10 @@ public class Player extends Yoink implements KeyToggleListener {
                 vy++;
             }
         }
+        
+        if (allowMouseTrigger && System.currentTimeMillis() - m.lastTimeClicked() < 20 && m.lastClickedButton() == 1) {
+            inv.useItem(inv.getEquipped()[0]);
+        }
     }
     
     public void drawUI(Graphics g) {
@@ -70,6 +79,14 @@ public class Player extends Yoink implements KeyToggleListener {
         if (keyCode == k.e.keyCode) {
             inv.useItem(inv.getEquipped()[0]);
         }
+    }
+    
+    public Key getKeyboardInterface() {
+        return k;
+    }
+    
+    public Mouse getMouseInterface() {
+        return m;
     }
     
 }

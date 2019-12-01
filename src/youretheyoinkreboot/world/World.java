@@ -37,10 +37,14 @@ public class World {
                 e.superTick();
             });
         } catch (java.util.ConcurrentModificationException ex) {
-            UIControl.MESSAGE_DISP.showMessage("ERROR: " + ex.getLocalizedMessage(), 5000);
+            UIControl.MSG_DISP.showMessage("ERROR: " + ex.getLocalizedMessage() + ", CODE 0", 5000);
         }
-
-        ph.tick();
+        
+        try {
+            ph.tick();
+        } catch (java.util.ConcurrentModificationException ex) {
+            UIControl.MSG_DISP.showMessage("ERROR: " + ex.getLocalizedMessage() + ", CODE 1", 5000);
+        }
     }
 
     public void render(Screen s) {
@@ -50,10 +54,14 @@ public class World {
                 e.superRender(s);
             });
         } catch (java.util.ConcurrentModificationException ex) {
-            UIControl.MESSAGE_DISP.showMessage("ERROR: " + ex.getLocalizedMessage(), 5000);
+            UIControl.MSG_DISP.showMessage("ERROR: " + ex.getLocalizedMessage() + ", CODE 2", 5000);
         }
 
-        ph.render(s);
+        try {
+            ph.render(s);
+        } catch (java.util.ConcurrentModificationException ex) {
+            UIControl.MSG_DISP.showMessage("ERROR: " + ex.getLocalizedMessage() + ", CODE 3", 5000);
+        }
     }
     
     private void drawBackground(int xa, int ya, Screen s) {

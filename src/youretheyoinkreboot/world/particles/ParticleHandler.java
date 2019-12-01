@@ -14,6 +14,8 @@ public class ParticleHandler {
     
     private World w;
     
+    private int numActive = 0;
+    
     public ParticleHandler(World w) {
         this.w = w;
         for (int i = 0; i < MAX_PARTICLES; i++) {
@@ -27,9 +29,14 @@ public class ParticleHandler {
     }
     
     public void tick() {
+        int active = 0;
         for (Particle p : getParticles()) {
-            if (p.isActive() && p.getID() != Particle.PLACEHOLDER_PARTICLE) p.superTick();
+            if (p.isActive() && p.getID() != Particle.PLACEHOLDER_PARTICLE) {
+                p.superTick();
+                active++;
+            }
         }
+        numActive = active;
     }
     
     public void render(Screen s) {
@@ -52,5 +59,9 @@ public class ParticleHandler {
     
     public Particle[] getParticles() {
         return particles;
+    }
+    
+    public int getParticleCount() {
+        return numActive;
     }
 }

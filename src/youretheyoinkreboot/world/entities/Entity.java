@@ -14,6 +14,8 @@ import youretheyoinkreboot.world.particles.Particle;
  */
 public abstract class Entity {
     
+    public final String id;
+    
     protected World w;
     
     protected int x, y;
@@ -37,6 +39,7 @@ public abstract class Entity {
     protected double accMod = acc;
     
     protected int shield = 0;
+    protected int damageMod = 0;
     
     protected float drag = 0.5f;
     protected float resistance = 1;
@@ -46,7 +49,8 @@ public abstract class Entity {
     protected boolean camTarget = false;
     protected Camera cam = null;
     
-    public Entity(int x, int y, int width, int height, int maxHitPoints, World w) {
+    public Entity(String id, int x, int y, int width, int height, int maxHitPoints, World w) {
+        this.id = id;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -73,7 +77,7 @@ public abstract class Entity {
     protected abstract void tick();
     protected abstract void render(Screen s);
     
-    private void move() {
+    protected void move() {
         int oldx = x;
         int oldy = y;
         x += vx;
@@ -137,7 +141,7 @@ public abstract class Entity {
         
     }
     
-    private void die(Entity source) {
+    protected void die(Entity source) {
         active = false;
         onDie(source);
     }
@@ -179,7 +183,7 @@ public abstract class Entity {
             Particle p = new Particle((byte)1, 500, x + (8*i) - (width / 2), y - 10, (5+(Integer.parseInt("" + String.valueOf(net).toCharArray()[i]))) + 0 * 32, w) {
                 @Override
                 protected void tick() {
-
+                    y--;
                 }
 
                 @Override

@@ -18,8 +18,8 @@ public abstract class AnimatedSprite extends Sprite {
     
     protected boolean animate = true;
     
-    public AnimatedSprite(int x, int y, int w, int h, int[] spriteIndices, int animSpeed, World world) {
-        super(x, y, w, h, spriteIndices[0], world);
+    public AnimatedSprite(String id, int x, int y, int w, int h, int[] spriteIndices, int animSpeed, World world) {
+        super(id, x, y, w, h, spriteIndices[0], world);
         int tw = w / SpriteSheet.TILE_SIZE;
         int th = h / SpriteSheet.TILE_SIZE;
         frames = new int[spriteIndices.length][tw * th];

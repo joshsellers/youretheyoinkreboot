@@ -20,7 +20,7 @@ public class UINotificationDisplay extends UIObject {
     
     private Color col = Color.white;
     
-    public boolean showDebug = true;
+    public boolean showDebug = false;
 
     public UINotificationDisplay(int x, int y) {
         super((byte) 0x03, x, y);
@@ -35,7 +35,7 @@ public class UINotificationDisplay extends UIObject {
     protected void draw(Graphics g) {
         int j = 0;
         for (Message m : messages) {
-            if (m != null && m.isActive() && (!m.msg.contains("ERROR") ^ showDebug)) {
+            if (m != null && m.isActive() && ((!m.msg.contains("ERROR") && !m.msg.contains("DEBUG")) || showDebug)) {
                 g.setColor(col);
                 g.drawString(m.msg, x, y + (12 * j));
                 j++;

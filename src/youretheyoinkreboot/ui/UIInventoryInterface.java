@@ -28,7 +28,7 @@ public class UIInventoryInterface extends UIObject {
 
     @Override
     protected void tick() {
-        if (System.currentTimeMillis() - m.lastTimeClicked() < 10) {
+        if (System.currentTimeMillis() - m.lastTimeClicked() < 20) {
             for (int i = 0; i < Inventory.INV_SIZE; i++) {
                 Rectangle mouse = new Rectangle(m.lastClickCoordsOnScreen()[0], m.lastClickCoordsOnScreen()[1], 2, 2);
                 Rectangle icon = new Rectangle(x, y + (10 * i), SpriteSheet.TILE_SIZE, SpriteSheet.TILE_SIZE);
@@ -47,15 +47,17 @@ public class UIInventoryInterface extends UIObject {
 
     @Override
     protected void draw(Graphics g) {
+        int j = 0;
         for (int i = 0; i < Inventory.INV_SIZE; i++) {
             if (source.getItem(i)[0] != Item.PLACEHOLDER.id) {
                 if (source.isEquipped(i)) {
                     g.setColor(Color.blue);
-                    g.fillRect(x - 1, (y + (12 * i)) - 1, 10, 10);
+                    g.fillRect(x - 1, (y + (12 * j)) - 1, 10, 10);
                 }
-                g.drawImage(getIcon(Item.ITEMS[source.getItem(i)[0]].tile), x, y + (12 * i), null);
+                g.drawImage(getIcon(Item.ITEMS[source.getItem(i)[0]].tile), x, y + (12 * j), null);
                 g.setColor(Color.white);
-                g.drawString(String.valueOf(source.getItem(i)[1]), x + 12, y + (12 * i) + 8);
+                g.drawString(String.valueOf(source.getItem(i)[1]), x + 12, y + (12 * j) + 8);
+                j++;
             }
         }
     }

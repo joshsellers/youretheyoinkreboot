@@ -18,7 +18,7 @@ public class Camera extends Entity {
     private Entity target = null;
 
     public Camera(int x, int y, Screen s, World w) {
-        super(x, y, 1, 1, 0, w);
+        super("CAM", x, y, 1, 1, 0, w);
         this.s = s;
         noClip();
     }

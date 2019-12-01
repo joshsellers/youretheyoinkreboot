@@ -1,7 +1,10 @@
 package youretheyoinkreboot.world.items;
 
 import com.amp.mathem.Statc;
+import youretheyoinkreboot.util.Mouse;
+import youretheyoinkreboot.world.entities.Player;
 import youretheyoinkreboot.world.entities.Yoink;
+import youretheyoinkreboot.world.particles.Projectile;
 
 /**
  *
@@ -50,6 +53,28 @@ public abstract class Item {
         @Override
         public void use(Yoink holder) {
 
+        }
+    };
+    public static final Item TPLAUNCHER = new Item(3, 0, "Test Projectile Launcher", TYPE_USEABLE, false) {
+        @Override
+        public void activateHoldEffects(Yoink holder) {
+
+        }
+
+        @Override
+        public void deactivateHoldEffects(Yoink holder) {
+
+        }
+
+        @Override
+        public void use(Yoink holder) {
+            if (holder instanceof Player) {
+                Player p = (Player) holder;
+                Mouse m = p.getMouseInterface();
+                int mx = m.currentCoordsInWorld()[0];
+                int my = m.currentCoordsInWorld()[1];
+                p.getWorld().addParticle(new Projectile(p.getX() + p.getWidth()/2 - 4, p.getY() + p.getHeight()/2 - 4, mx, my, Projectile.TYPE_TEST, p));
+            }
         }
     };
     

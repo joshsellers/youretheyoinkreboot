@@ -34,7 +34,7 @@ public class SpriteSheet {
             sheet = ImageIO.read(Main.class.getResource(filePath).toURI().toURL());
             width = sheet.getWidth() / TILE_SIZE;
             height = sheet.getHeight() / TILE_SIZE;
-            if (width != SIZE_TILES || height != SIZE_TILES) UIControl.MESSAGE_DISP.showMessage("ERROR:invalid spritesheet", 5000);
+            if (width != SIZE_TILES || height != SIZE_TILES) UIControl.MSG_DISP.showMessage("ERROR:invalid spritesheet", 5000);
         } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(SpriteSheet.class.getName()).log(Level.SEVERE, null, ex);
         }

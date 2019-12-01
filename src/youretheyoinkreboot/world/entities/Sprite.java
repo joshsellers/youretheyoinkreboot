@@ -17,8 +17,8 @@ public abstract class Sprite extends Entity {
     protected int mirrorDir;
     protected int hue;
     
-    public Sprite(int x, int y, int w, int h, int tile, World world) {
-        super(x, y, w, h, 100, world);
+    public Sprite(String id, int x, int y, int w, int h, int tile, World world) {
+        super(id, x, y, w, h, 100, world);
         this.sheet = world.getScreen().sheet;
         int tw = w / SpriteSheet.TILE_SIZE;
         int th = h / SpriteSheet.TILE_SIZE;

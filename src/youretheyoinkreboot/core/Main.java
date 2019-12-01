@@ -1,5 +1,6 @@
 package youretheyoinkreboot.core;
 
+import com.amp.mathem.Statc;
 import com.amp.pre.ABFrame;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -10,6 +11,7 @@ import java.awt.image.DataBufferInt;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.core.gfx.SpriteSheet;
 import youretheyoinkreboot.ui.UIControl;
+import static youretheyoinkreboot.ui.UIControl.MSG_DISP;
 import youretheyoinkreboot.ui.UIInventoryInterface;
 import youretheyoinkreboot.ui.UITextLabel;
 import youretheyoinkreboot.util.Key;
@@ -17,7 +19,12 @@ import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.Camera;
+import youretheyoinkreboot.world.entities.Entity;
 import youretheyoinkreboot.world.entities.Player;
+import youretheyoinkreboot.world.entities.Sprite;
+import youretheyoinkreboot.world.entities.Yoink;
+import youretheyoinkreboot.world.items.DroppedItem;
+import youretheyoinkreboot.world.items.Item;
 
 /**
  *
@@ -25,7 +32,13 @@ import youretheyoinkreboot.world.entities.Player;
  */
 public class Main extends ABFrame implements KeyToggleListener {
     
-    public final static String VERSION = "0.095";
+    /* TODO by v0.1:
+    *  - add command interface
+    *  - set Player.movingDir based on mouse coords when aiming proj. item
+    *  - fix camera pos before player moves
+    *  - add enemies
+    */
+    public final static String VERSION = "0.096";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -45,6 +58,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     private UITextLabel fpsMeter;
     private UITextLabel camCoords;
     private UITextLabel playerInfo;
+    private UITextLabel particleCount;
     
     private boolean showDebug;
     
@@ -81,22 +95,58 @@ public class Main extends ABFrame implements KeyToggleListener {
         w.addEntity(cam);
         cam.hide();
         
-        p = new Player(0, -120, k, w);
+        p = new Player(0, -120, k, m, w);
         p.enableCollision();
         w.addEntity(p);
         cam.track(p);
         cam.updateScreen();
     
+        int len = 400;
+        for (int i = 0; i < len; i++) {
+            Sprite sprite = new Sprite("PURPLEORB", Statc.intRandom(-1000, 1000), 
+                Statc.intRandom(-1000, 1000), 8, 8, 4 + 0 * sheet.width, w) {
+                @Override
+                protected void tick() {
+                    this.resistance = 1f;
+                }
+
+                @Override
+                protected void render(Screen s) {
+
+                }
+                
+                @Override
+                protected void onCollision(Entity with) {
+                    damage(10, with);
+                }
+                
+                @Override
+                protected void onDie(Entity source) {
+                    w.addEntity(new DroppedItem(x, y, Item.PURPLEORB, w));
+                    if (Statc.intRandom(0, 5) == 0) {
+                        w.addEntity(new DroppedItem(x, y + 10, Item.RAINBOWSHARD, w));
+                    }
+                }
+
+            };
+            w.addEntity(sprite);
+            sprite.enableCollision();
+        }
+        
         fpsMeter = new UITextLabel(fps, 10, 20);
         UIControl.addUIObject(fpsMeter);
         camCoords = new UITextLabel("CAM X: " + cam.getX() + " CAM Y: " + cam.getY(), 10, 32);
         UIControl.addUIObject(camCoords);
         playerInfo = new UITextLabel("player", 10, 44);
         UIControl.addUIObject(playerInfo);
+        particleCount = new UITextLabel("particles", 10, 56);
+        UIControl.addUIObject(particleCount);
         
         ii = new UIInventoryInterface(((Screen.WIDTH / Screen.SCALE) / 2) - 10, 10, p.getInventory(), m);
         ii.hide();
         UIControl.addUIObject(ii);
+        
+        p.getInventory().addItem(Item.TPLAUNCHER.id, 1);
     }
 
     @Override
@@ -127,15 +177,18 @@ public class Main extends ABFrame implements KeyToggleListener {
             fpsMeter.show();
             camCoords.show();
             playerInfo.show();
+            particleCount.show();
         }
         else {
             fpsMeter.hide();
             camCoords.hide();
             playerInfo.hide();
+            particleCount.hide();
         }
         fpsMeter.setText(fps + " FPS");
         camCoords.setText("CAM X: " + cam.getX() + " Y: " + cam.getY());
         playerInfo.setText("PLAYER X: " + p.getX() + " Y: " + p.getY() + " VELOCITY: " + ((int) p.getVelocity()));
+        particleCount.setText(String.valueOf("PARTICLE COUNT: " + w.getParticleHandler().getParticleCount()));
         UIControl.draw(g);
         grphcs.drawImage(image, 0, 0, f.getWidth(), f.getHeight(), f);
     }
@@ -145,6 +198,10 @@ public class Main extends ABFrame implements KeyToggleListener {
         if (keyCode == KeyEvent.VK_F3) showDebug = !showDebug;
         if (keyCode == k.i.keyCode) {
             ii.toggle();
+        }
+        
+        if (keyCode == KeyEvent.VK_F4) {
+            MSG_DISP.showDebug = !MSG_DISP.showDebug;
         }
     }
     

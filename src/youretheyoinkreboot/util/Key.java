@@ -23,9 +23,10 @@ public class Key implements KeyListener {
     public Button f3 = new Button(KeyEvent.VK_F3);
     public Button e = new Button(KeyEvent.VK_E);
     public Button i = new Button(KeyEvent.VK_I);
+    public Button f4 = new Button(KeyEvent.VK_F4);
     
     public Key() {
-        buttons = new Button[] {w, a, s, d, b, f3, e, i};
+        buttons = new Button[] {w, a, s, d, b, f3, e, i, f4};
     }
 
     @Override
