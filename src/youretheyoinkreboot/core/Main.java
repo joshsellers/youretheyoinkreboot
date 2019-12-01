@@ -22,7 +22,6 @@ import youretheyoinkreboot.world.entities.Camera;
 import youretheyoinkreboot.world.entities.Entity;
 import youretheyoinkreboot.world.entities.Player;
 import youretheyoinkreboot.world.entities.Sprite;
-import youretheyoinkreboot.world.entities.Yoink;
 import youretheyoinkreboot.world.items.DroppedItem;
 import youretheyoinkreboot.world.items.Item;
 
@@ -35,10 +34,9 @@ public class Main extends ABFrame implements KeyToggleListener {
     /* TODO by v0.1:
     *  - add command interface
     *  - set Player.movingDir based on mouse coords when aiming proj. item
-    *  - fix camera pos before player moves
     *  - add enemies
     */
-    public final static String VERSION = "0.096";
+    public final static String VERSION = "0.097";
     
     private Screen s;
     private SpriteSheet sheet;
@@ -91,13 +89,13 @@ public class Main extends ABFrame implements KeyToggleListener {
         
         w = new World(s);
         
-        cam = new Camera(0, 0, s, w);
-        w.addEntity(cam);
-        cam.hide();
-        
-        p = new Player(0, -120, k, m, w);
+        p = new Player(-1000, -1200, k, m, w);
         p.enableCollision();
         w.addEntity(p);
+        
+        cam = new Camera(p.getX(), p.getY(), s, w);
+        w.addEntity(cam);
+        cam.hide();
         cam.track(p);
         cam.updateScreen();
     
