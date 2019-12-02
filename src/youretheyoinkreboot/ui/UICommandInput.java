@@ -57,14 +57,14 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                                     boolean down = false;
                                     boolean left = false;
                                     boolean right = false;
-                                    if (p.getX() < this.x) {
+                                    if (p.getX() + p.getWidth() < this.x) {
                                         thrustLeft();
                                         left = true;
                                     } else if (p.getX() > this.x) {
                                         thrustRight();
                                         right = true;
                                     }
-                                    if (p.getY() < this.y) {
+                                    if (p.getY() + p.getHeight() < this.y) {
                                         thrustUp();
                                         up = true;
                                     } else if (p.getY() > this.y) {
@@ -95,7 +95,7 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
 
                                 @Override
                                 protected void onCollision(Entity with) {
-                                    if (!with.id.equals(this.id) && damageStagger % 20 == 0) {
+                                    if (!with.id.equals(this.id) && damageStagger % 4 == 0) {
                                         with.damage(damageMod, this);
                                     }
                                     damageStagger++;
@@ -104,6 +104,7 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
 
                             testEnemy.setColor(Statc.intRandom(0xFF0000, 0xFF1010));
                             testEnemy.setDamageMod(Statc.intRandom(1, 5));
+                            testEnemy.setKnockback(1);
                             testEnemy.enableCollision();
                             w.addEntity(testEnemy);
                         }
@@ -112,8 +113,9 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                 }
                 break;
         }
-
-        UIControl.MSG_DISP.showMessage("DEBUG(CMD): " + command + " # args: " + args.length, 0x00FF00, 5000);
+        int argCount = args.length;
+        if (argCount == 1 && args[0].equals("NULL")) argCount = 0; 
+        UIControl.MSG_DISP.showMessage("DEBUG(CMD): executed: " + command + " # args: " + argCount, 0x00FF00, 5000);
 
         currentCommand = "";
     }
@@ -147,6 +149,11 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                 this.show();
             }
         }
+        
+        if (isVisible() && keyCode == k.escape.keyCode) {;
+            currentCommand = "";
+            this.hide();
+        }
 
         if (this.isVisible()) {
             String keyChar = KeyEvent.getKeyText(keyCode).toUpperCase();
@@ -158,6 +165,8 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
             else if (keyCode == KeyEvent.VK_COMMA) currentCommand += ",";
             else if (keyCode == KeyEvent.VK_ENTER) {
                 processCommand();
+                Main.pause = false;
+                hide();
             }
             else if (keyCode == KeyEvent.VK_BACK_SPACE && currentCommand.length() > 0) {
                 currentCommand = currentCommand.substring(0, currentCommand.length() - 1);

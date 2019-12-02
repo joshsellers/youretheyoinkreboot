@@ -41,6 +41,7 @@ public abstract class Entity {
     
     protected int shield = 0;
     protected int damageMod = 0;
+    protected float knockBack = 1;
     
     protected float drag = 0.5f;
     protected float resistance = 1;
@@ -92,12 +93,12 @@ public abstract class Entity {
                 if (e != this && e.active && this.intersects(e) && e.collides()) {
                     x = oldx;
                     y = oldy;
-                    if (e.resistance < this.resistance) {
-                        e.vx += Math.floor(vx/e.resistance);
-                        e.vy += Math.floor(vy/e.resistance);
-                    }
-                    vx = Math.floor(-((vx / (2*resistance))));
-                    vy = Math.floor(-((vy / (2*resistance))));
+                    //if (e.resistance < this.resistance) {
+                        e.vx += Math.floor(vx*knockBack);
+                        e.vy += Math.floor(vy*knockBack);
+                    //}
+                    vx = Math.floor(-((vx/2)));
+                    vy = Math.floor(-((vy/2)));
 
                     bounds.x = x;
                     bounds.y = y;
@@ -300,5 +301,25 @@ public abstract class Entity {
     
     public void setDamageMod(int damage) {
         this.damageMod = damage;
+    }
+    
+    public int getDamageMod() {
+        return damageMod;
+    }
+    
+    public void setShield(int val) {
+        this.shield = val;
+    }
+    
+    public int getShield() {
+        return shield;
+    }
+    
+    public void setKnockback(float val) {
+        this.knockBack = val;
+    }
+    
+    public float getKnockback() {
+        return this.knockBack;
     }
 }

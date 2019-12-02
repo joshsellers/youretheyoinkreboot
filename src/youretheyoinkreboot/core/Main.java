@@ -27,6 +27,7 @@ import youretheyoinkreboot.world.entities.Sprite;
 import youretheyoinkreboot.world.entities.Yoink;
 import youretheyoinkreboot.world.items.DroppedItem;
 import youretheyoinkreboot.world.items.Item;
+import youretheyoinkreboot.world.particles.ParticleHandler;
 
 /**
  *
@@ -35,7 +36,6 @@ import youretheyoinkreboot.world.items.Item;
 public class Main extends ABFrame implements KeyToggleListener {
     
     /* TODO by v0.1:
-    *  - add command interface
     *  - set Player.movingDir based on mouse coords when aiming proj. item
     *  - add enemies
     *  - add colored orbs as distinct class
@@ -44,7 +44,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     *  - make rainbow shards define their color upon contruction 
     *    = define a relationship between RGB value and stat changes
     */
-    public final static String VERSION = "0.098";
+    public final static String VERSION = "0.099";
     
     public static boolean pause = false;
     
@@ -74,9 +74,6 @@ public class Main extends ABFrame implements KeyToggleListener {
     private boolean showDebug;
     
     public static void main(String[] args) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Screen.WIDTH = (int) (screenSize.width);
-        Screen.HEIGHT = (int) (screenSize.height) - 35;
         new Main(60, "", true, true, 1.0f, Screen.WIDTH, Screen.HEIGHT, 1, 
             false).start();
     }
@@ -125,7 +122,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         memDisp = new UITextLabel("memory", 10, 68);
         UIControl.addUIObject(memDisp);
         
-        ii = new UIInventoryInterface(((Screen.WIDTH / Screen.SCALE) / 2) - 10, 10, p.getInventory(), m);
+        ii = new UIInventoryInterface(((Screen.WIDTH / Screen.SCALE) / 2) - 10, 25, p.getInventory(), m);
         ii.hide();
         UIControl.addUIObject(ii);
         
@@ -181,7 +178,7 @@ public class Main extends ABFrame implements KeyToggleListener {
 
     @Override
     protected void draw(Graphics grphcs) {
-        w.render(s);
+        if (!pause) w.render(s);
         
         for (int y = 0; y < Screen.HEIGHT / Screen.SCALE; y++) {
             for (int x = 0; x < Screen.WIDTH / Screen.SCALE; x++) {
@@ -193,6 +190,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         }
         
         Graphics g = image.getGraphics();
+        p.drawUI(g);
         
         if (showDebug) {
             fpsMeter.show();
@@ -215,7 +213,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         fpsMeter.setText(fps + " FPS");
         camCoords.setText("CAM X: " + cam.getX() + " Y: " + cam.getY());
         playerInfo.setText("PLAYER X: " + p.getX() + " Y: " + p.getY() + " VELOCITY: " + ((int) p.getVelocity()));
-        particleCount.setText(String.valueOf("PARTICLE COUNT: " + w.getParticleHandler().getParticleCount()));
+        particleCount.setText(String.valueOf("PARTICLE COUNT: " + w.getParticleHandler().getParticleCount() + " / " + ParticleHandler.MAX_PARTICLES));
         memDisp.setText(String.valueOf((Runtime.getRuntime().freeMemory()/1000000) + "MB / " + (Runtime.getRuntime().maxMemory()/1000000) + "MB"));
         UIControl.draw(g);
         
@@ -237,7 +235,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         if (keyCode == KeyEvent.VK_ESCAPE) pause = !pause;
         
         if (keyCode == KeyEvent.VK_F3) showDebug = !showDebug;
-        if (keyCode == k.i.keyCode) {
+        if (!commandLine.isVisible() && keyCode == k.i.keyCode) {
             ii.toggle();
         }
         

@@ -2,7 +2,7 @@ package youretheyoinkreboot.world.entities;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import youretheyoinkreboot.ui.UIControl;
+import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.util.Mouse;
@@ -73,7 +73,12 @@ public class Player extends Yoink implements KeyToggleListener {
     }
     
     public void drawUI(Graphics g) {
-
+        int w = 50;
+        int h = 10;
+        g.setColor(Color.red.darker());
+        g.fillRect((((Screen.WIDTH / Screen.SCALE) / 2) - (w / 2)) - 1, 9, w + 2, h + 2);
+        g.setColor(Color.red);
+        g.fillRect((((Screen.WIDTH / Screen.SCALE) / 2) - (w / 2)), 10, (int) (w * ((float)getHP()/(float)getMaxHP())), h);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class Projectile extends Particle {
         this.damageMod = TYPE_DATA[type][1];
         this.source = source;
         
-        this.v = (double) TYPE_DATA[type][0];
+        this.v = (double) TYPE_DATA[type][0] + source.getVelocity();
         int xDist = targetX - x;
         int yDist = targetY - y;
         this.initX = x;

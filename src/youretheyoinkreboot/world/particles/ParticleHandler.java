@@ -8,7 +8,7 @@ import youretheyoinkreboot.world.World;
  * @author josh
  */
 public class ParticleHandler {
-    public static final int MAX_PARTICLES = 256;
+    public static final int MAX_PARTICLES = 512;
     
     private final Particle[] particles = new Particle[MAX_PARTICLES];
     

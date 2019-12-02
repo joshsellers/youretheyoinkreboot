@@ -1,14 +1,18 @@
 package youretheyoinkreboot.core.gfx;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 /**
  *
  * @author josh
  */
 public class Screen {
 
-    public static int WIDTH = 900;
-    public static int HEIGHT = 600;
-    public final static int SCALE = 3;
+    public final static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    public final static int WIDTH = screenSize.width;
+    public final static int HEIGHT = screenSize.height - 35;
+    public final static int SCALE = 2;
     
     public final static int SHIFT = 3;
     
