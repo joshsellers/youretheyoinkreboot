@@ -44,7 +44,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     *  - make rainbow shards define their color upon contruction 
     *    = define a relationship between RGB value and stat changes
     */
-    public final static String VERSION = "0.099";
+    public final static String VERSION = "0.0991";
     
     public static boolean pause = false;
     
@@ -63,6 +63,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     private Player p;
     private UIInventoryInterface ii;
     
+    private UITextLabel versionLabel;
     private UITextLabel fpsMeter;
     private UITextLabel camCoords;
     private UITextLabel playerInfo;
@@ -111,15 +112,17 @@ public class Main extends ABFrame implements KeyToggleListener {
     
         spawnTestyBois();
         
-        fpsMeter = new UITextLabel(fps, 10, 20);
+        versionLabel = new UITextLabel("V" + VERSION, 10, 20);
+        UIControl.addUIObject(versionLabel);
+        fpsMeter = new UITextLabel(fps, 10, 32);
         UIControl.addUIObject(fpsMeter);
-        camCoords = new UITextLabel("CAM X: " + cam.getX() + " CAM Y: " + cam.getY(), 10, 32);
+        camCoords = new UITextLabel("CAM X: " + cam.getX() + " CAM Y: " + cam.getY(), 10, 44);
         UIControl.addUIObject(camCoords);
-        playerInfo = new UITextLabel("player", 10, 44);
+        playerInfo = new UITextLabel("player", 10, 56);
         UIControl.addUIObject(playerInfo);
-        particleCount = new UITextLabel("particles", 10, 56);
+        particleCount = new UITextLabel("particles", 10, 68);
         UIControl.addUIObject(particleCount);
-        memDisp = new UITextLabel("memory", 10, 68);
+        memDisp = new UITextLabel("memory", 10, 80);
         UIControl.addUIObject(memDisp);
         
         ii = new UIInventoryInterface(((Screen.WIDTH / Screen.SCALE) / 2) - 10, 25, p.getInventory(), m);
@@ -208,7 +211,7 @@ public class Main extends ABFrame implements KeyToggleListener {
             particleCount.hide();
             memDisp.hide();
             
-            MSG_DISP.move(MSG_DISP.getX(), 20);
+            MSG_DISP.move(MSG_DISP.getX(), 30);
         }
         fpsMeter.setText(fps + " FPS");
         camCoords.setText("CAM X: " + cam.getX() + " Y: " + cam.getY());

@@ -73,7 +73,7 @@ public class Player extends Yoink implements KeyToggleListener {
     }
     
     public void drawUI(Graphics g) {
-        int w = 50;
+        int w = 200;
         int h = 10;
         g.setColor(Color.red.darker());
         g.fillRect((((Screen.WIDTH / Screen.SCALE) / 2) - (w / 2)) - 1, 9, w + 2, h + 2);

@@ -57,14 +57,14 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                                     boolean down = false;
                                     boolean left = false;
                                     boolean right = false;
-                                    if (p.getX() + p.getWidth() < this.x) {
+                                    if (p.getX() + p.getWidth() - 1 < this.x) {
                                         thrustLeft();
                                         left = true;
                                     } else if (p.getX() > this.x) {
                                         thrustRight();
                                         right = true;
                                     }
-                                    if (p.getY() + p.getHeight() < this.y) {
+                                    if (p.getY() + p.getHeight() - 1 < this.y) {
                                         thrustUp();
                                         up = true;
                                     } else if (p.getY() > this.y) {
@@ -95,7 +95,7 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
 
                                 @Override
                                 protected void onCollision(Entity with) {
-                                    if (!with.id.equals(this.id) && damageStagger % 4 == 0) {
+                                    if (!with.id.equals(this.id) && damageStagger % 16 == 0) {
                                         with.damage(damageMod, this);
                                     }
                                     damageStagger++;
@@ -111,6 +111,37 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                         UIControl.MSG_DISP.showMessage("DEBUG(CMD): spawned " + times + " angryboi(s)", 0x00FF00, 5000);
                         break;
                 }
+                break;
+            case "PLAYER":
+                switch (args[0]) {
+                    case "HEAL":
+                        int by = p.getMaxHP() - p.getHP();
+                        if (args.length > 1) {
+                            by = Integer.parseInt(args[1]);
+                        }
+                        p.addHP(by);
+                        break;
+                    case "KILL":
+                        currentCommand = "KILL:PLAYER";
+                        processCommand();
+                        return;
+                }
+                break;
+            case "KILL":
+                switch (args[0]) {
+                    case "ALL":
+                        //TODO: do the cursed conmodexcptn fix here
+                        for (Entity e : w.getEntities()) {
+                            if (e.isActive()) e.damage(e.getMaxHP(), p);
+                        }
+                        break;
+                    case "PLAYER":
+                        p.damage(p.getMaxHP(), p);
+                        break;
+                }
+                break;
+            default: 
+                UIControl.MSG_DISP.showMessage("DEBUG(CMD): unrecognized command", 0xFF0000, 5000);
                 break;
         }
         int argCount = args.length;

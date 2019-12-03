@@ -11,7 +11,7 @@ import java.util.List;
 public class UIControl {
     private static final List<UIObject> uiobjects = new ArrayList<>();
     
-    public static final UINotificationDisplay MSG_DISP = new UINotificationDisplay(10, 20);;
+    public static final UINotificationDisplay MSG_DISP = new UINotificationDisplay(10, 30);;
     
     public static void tick() {
         for (UIObject obj : getUIObjects()) {

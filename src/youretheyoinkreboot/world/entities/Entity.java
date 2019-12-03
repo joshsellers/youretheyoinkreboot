@@ -51,6 +51,8 @@ public abstract class Entity {
     protected boolean camTarget = false;
     protected Camera cam = null;
     
+    protected boolean hasDied = false;
+    
     public Entity(String id, int x, int y, int width, int height, int maxHitPoints, World w) {
         this.id = id;
         this.x = x;
@@ -93,10 +95,10 @@ public abstract class Entity {
                 if (e != this && e.active && this.intersects(e) && e.collides()) {
                     x = oldx;
                     y = oldy;
-                    //if (e.resistance < this.resistance) {
-                        e.vx += Math.floor(vx*knockBack);
-                        e.vy += Math.floor(vy*knockBack);
-                    //}
+                    if (e.resistance <= this.resistance) {
+                        e.vx += Math.floor(vx*knockBack/e.resistance);
+                        e.vy += Math.floor(vy*knockBack/e.resistance);
+                    }
                     vx = Math.floor(-((vx/2)));
                     vy = Math.floor(-((vy/2)));
 
@@ -146,6 +148,7 @@ public abstract class Entity {
     
     protected void die(Entity source) {
         active = false;
+        hasDied = true;
         onDie(source);
     }
     
@@ -199,6 +202,15 @@ public abstract class Entity {
             p.vy = vy;
             p.hue = 0xEEA000;
             w.addParticle(p);
+        }
+    }
+    
+    public void addHP(int incr) {
+        if (incr + this.getHP() > this.getMaxHP()) this.hp = maxHitPoints;
+        else if (incr > 0) this.hp += incr;
+        if (hasDied) {
+            active = true;
+            hasDied = false;
         }
     }
     
@@ -321,5 +333,9 @@ public abstract class Entity {
     
     public float getKnockback() {
         return this.knockBack;
+    }
+    
+    public boolean hasDied() {
+        return this.hasDied;
     }
 }
