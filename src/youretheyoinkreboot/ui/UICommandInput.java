@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
+import java.util.ConcurrentModificationException;
 import youretheyoinkreboot.core.Main;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
@@ -130,10 +131,9 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
             case "KILL":
                 switch (args[0]) {
                     case "ALL":
-                        //TODO: do the cursed conmodexcptn fix here
-                        for (Entity e : w.getEntities()) {
-                            if (e.isActive()) e.damage(e.getMaxHP(), p);
-                        }
+                        w.remover = (e) -> {
+                            return e.isActive() && !e.id.contains("PLAYER") && !e.id.contains("CAM");
+                        };
                         break;
                     case "PLAYER":
                         p.damage(p.getMaxHP(), p);

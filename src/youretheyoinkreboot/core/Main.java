@@ -44,7 +44,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     *  - make rainbow shards define their color upon contruction 
     *    = define a relationship between RGB value and stat changes
     */
-    public final static String VERSION = "0.0991";
+    public final static String VERSION = "0.0992";
     
     public static boolean pause = false;
     

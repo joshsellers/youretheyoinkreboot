@@ -4,6 +4,7 @@ import com.amp.mathem.Statc;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import youretheyoinkreboot.core.Main;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.core.gfx.SpriteSheet;
 import youretheyoinkreboot.ui.UIControl;
@@ -27,21 +28,47 @@ public class World {
     
     private boolean showHitBoxes = false;
     
+    public EntityRemover remover;
+    
+    private boolean adding = false;
+    
     public World(Screen s) {
         this.s = s;
         generateBackground(s);
         ph = new ParticleHandler(this);
+        
+        remover = (e) -> {
+            return false;
+        };
     }
     
-    public void tick() {
+    public synchronized void tick() {
         try {
-            getEntities().stream().filter((e) -> (e.isActive())).forEach((e) -> {
-                e.superTick();
-            });
+            boolean removalParametersChanged = false;
+
+            for (Iterator<Entity> it = getEntities().iterator(); it.hasNext();) {
+                Entity e = it.next();
+                if (e.isActive()) {
+                    e.superTick();
+                    if (remover.needsRemoved(e)) {
+                        removalParametersChanged = true;
+                        e.damage(e.getMaxHP(), e);
+                    }
+                } else {
+                    UIControl.MSG_DISP.showMessage("DEBUG: entity \"" + e.id + "\" was removed", 0x00FF88, 5000);
+                    it.remove();
+                }
+            }
+
+            if (removalParametersChanged) {
+                remover = (e) -> {
+                    return false;
+                };
+            }
         } catch (java.util.ConcurrentModificationException ex) {
             UIControl.MSG_DISP.showMessage("ERROR: " + ex.getLocalizedMessage() + ", CODE 0", 0xFF0000, 5000);
         }
-        
+
         try {
             ph.tick();
         } catch (java.util.ConcurrentModificationException ex) {
@@ -168,7 +195,8 @@ public class World {
     }
     
     public synchronized void addEntity(Entity e) {
-        this.getEntities().add(e);
+        adding = true;
+        getEntities().add(e);
     }
     
     public Screen getScreen() {
