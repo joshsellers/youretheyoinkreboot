@@ -4,9 +4,7 @@ import com.amp.mathem.Statc;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import youretheyoinkreboot.core.Main;
 import youretheyoinkreboot.core.gfx.Screen;
-import youretheyoinkreboot.core.gfx.SpriteSheet;
 import youretheyoinkreboot.ui.UIControl;
 import youretheyoinkreboot.world.entities.Entity;
 import youretheyoinkreboot.world.particles.Particle;
@@ -20,7 +18,6 @@ public class World {
     private final List<Entity> entities = new ArrayList<>();
     private final Screen s;
     
-    private int bx, by;
     private int[] oldBackground;
     private int[] background;
     
@@ -30,7 +27,6 @@ public class World {
     
     public EntityRemover remover;
     
-    private boolean adding = false;
     
     public World(Screen s) {
         this.s = s;
@@ -195,7 +191,6 @@ public class World {
     }
     
     public synchronized void addEntity(Entity e) {
-        adding = true;
         getEntities().add(e);
     }
     

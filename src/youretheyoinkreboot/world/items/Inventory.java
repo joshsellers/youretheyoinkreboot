@@ -76,7 +76,9 @@ public class Inventory {
     }
     
     public void equip(int index) {
-        if (Item.ITEMS[items[index][0]].type != Item.TYPE_USEABLE && Item.ITEMS[items[index][0]].type != Item.TYPE_CONSUMABLE) {
+        if (Item.ITEMS[items[index][0]].type != Item.TYPE_USEABLE 
+            && Item.ITEMS[items[index][0]].type != Item.TYPE_CONSUMABLE 
+            && Item.ITEMS[items[index][0]].type != Item.TYPE_RANGED) {
             for (int i = 0; i < equipped.length; i++) {
                 if (equipped[i] == -1) {
                     equipped[i] = index;

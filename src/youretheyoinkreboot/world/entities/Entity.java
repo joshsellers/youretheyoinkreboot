@@ -96,8 +96,8 @@ public abstract class Entity {
                     x = oldx;
                     y = oldy;
                     if (e.resistance <= this.resistance) {
-                        e.vx += Math.floor(vx*knockBack/e.resistance);
-                        e.vy += Math.floor(vy*knockBack/e.resistance);
+                        e.vx += Math.floor(((vx) * knockBack));
+                        e.vy += Math.floor(((vy) * knockBack));
                     }
                     vx = Math.floor(-((vx/2)));
                     vy = Math.floor(-((vy/2)));
@@ -212,6 +212,14 @@ public abstract class Entity {
             active = true;
             hasDied = false;
         }
+    }
+    
+    public void setMaxSpeed(int maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+    
+    public int getMaxSpeed() {
+        return this.maxSpeed;
     }
     
     public int getX() {

@@ -7,6 +7,7 @@ import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.World;
+import youretheyoinkreboot.world.items.Item;
 
 /**
  *
@@ -33,14 +34,31 @@ public class Player extends Yoink implements KeyToggleListener {
     @Override
     protected void tick() {
         if (maxSpeed <= 5) drag = 0;
-        if (k.w.isPressed() && k.a.isPressed()) movingDir = 0;
-        else if (k.a.isPressed() && k.s.isPressed()) movingDir = 6;
-        else if (k.w.isPressed() && k.d.isPressed()) movingDir = 2;
-        else if (k.d.isPressed() && k.s.isPressed()) movingDir = 4;
-        else if (k.w.isPressed()) movingDir = 1;
-        else if (k.s.isPressed()) movingDir = 5;
-        else if (k.a.isPressed()) movingDir = 7;
-        else if (k.d.isPressed()) movingDir = 3;
+        //boolean lookAtCursor = Item.ITEMS[getInventory().getEquipped()[0]].type == Item.TYPE_RANGED;
+        
+        int mx = m.currentCoordsInWorld()[0];
+        int my = m.currentCoordsInWorld()[1];
+
+        int w = (Screen.WIDTH / Screen.SCALE);
+        int h = (Screen.HEIGHT / Screen.SCALE);
+        
+        int centerPadding = 50;
+        
+        //if (!lookAtCursor) {
+            if (k.w.isPressed() && k.a.isPressed()) movingDir = 0; 
+            else if (k.a.isPressed() && k.s.isPressed()) movingDir = 6;
+            else if (k.w.isPressed() && k.d.isPressed()) movingDir = 2;
+            else if (k.d.isPressed() && k.s.isPressed()) movingDir = 4;
+            else if (k.w.isPressed()) movingDir = 1;
+            else if (k.s.isPressed()) movingDir = 5;
+            else if (k.a.isPressed()) movingDir = 7;
+            else if (k.d.isPressed()) movingDir = 3;
+        /*} else {
+            if (x < w / 2 && y < h / 2) movingDir = 0;
+            else if (x > w / 2 && y < h / 2) movingDir = 2;
+            else if (x > w / 2 && y > h / 2) movingDir = 4;
+            
+        }*/
         
         if (k.w.isPressed()) thrustUp();
         else if (k.s.isPressed()) thrustDown();

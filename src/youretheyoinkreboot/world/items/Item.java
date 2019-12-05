@@ -16,6 +16,8 @@ public abstract class Item {
     public final static int TYPE_WEARABLE = 1;
     public final static int TYPE_USEABLE = 2;
     public final static int TYPE_OTHER = 4;
+    public final static int TYPE_RANGED = 5;
+    public final static int TYPE_AMMO = 6;
     
     public static final Item PLACEHOLDER = new Item(0, 0, "NULL", -1, false) {
         @Override
@@ -55,7 +57,7 @@ public abstract class Item {
 
         }
     };
-    public static final Item TPLAUNCHER = new Item(3, 0, "Test Projectile Launcher", TYPE_USEABLE, false) {
+    public static final Item TPLAUNCHER = new Item(3, 0, "Test Projectile Launcher", TYPE_RANGED, false) {
         @Override
         public void activateHoldEffects(Yoink holder) {
 
@@ -85,7 +87,7 @@ public abstract class Item {
     public final int tile;
     
     public Item(int id, int tile, String name, int type, boolean stackable) {
-        if (ITEMS[id] != null) throw new RuntimeException("Dupe ID! " + id);
+        if (ITEMS[id] != null) throw new RuntimeException("Duplicate ID! " + id);
         ITEMS[id] = this;
         this.id = id;
         this.tile = tile;

@@ -3,9 +3,7 @@ package youretheyoinkreboot.core;
 import com.amp.mathem.Statc;
 import com.amp.pre.ABFrame;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -21,11 +19,8 @@ import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.Camera;
-import youretheyoinkreboot.world.entities.Entity;
+import youretheyoinkreboot.world.entities.Garble;
 import youretheyoinkreboot.world.entities.Player;
-import youretheyoinkreboot.world.entities.Sprite;
-import youretheyoinkreboot.world.entities.Yoink;
-import youretheyoinkreboot.world.items.DroppedItem;
 import youretheyoinkreboot.world.items.Item;
 import youretheyoinkreboot.world.particles.ParticleHandler;
 
@@ -43,8 +38,9 @@ public class Main extends ABFrame implements KeyToggleListener {
     *    = increase value of orbs as distance from spawn 
     *  - make rainbow shards define their color upon contruction 
     *    = define a relationship between RGB value and stat changes
+    *  - properly implement ammo
     */
-    public final static String VERSION = "0.0992";
+    public final static String VERSION = "0.0993";
     
     public static boolean pause = false;
     
@@ -69,6 +65,8 @@ public class Main extends ABFrame implements KeyToggleListener {
     private UITextLabel playerInfo;
     private UITextLabel particleCount;
     private UITextLabel memDisp;
+    
+    private UITextLabel pauseLabel;
     
     private UICommandInput commandLine;
     
@@ -125,6 +123,14 @@ public class Main extends ABFrame implements KeyToggleListener {
         memDisp = new UITextLabel("memory", 10, 80);
         UIControl.addUIObject(memDisp);
         
+        
+        int xOffset = 35;
+        int yOffset = 10;
+        pauseLabel = new UITextLabel("game paused", ((Screen.WIDTH / Screen.SCALE) / 2) - xOffset, 
+                                                    ((Screen.HEIGHT / Screen.SCALE) / 2) - yOffset);
+        pauseLabel.hide();
+        UIControl.addUIObject(pauseLabel);
+        
         ii = new UIInventoryInterface(((Screen.WIDTH / Screen.SCALE) / 2) - 10, 25, p.getInventory(), m);
         ii.hide();
         UIControl.addUIObject(ii);
@@ -137,36 +143,12 @@ public class Main extends ABFrame implements KeyToggleListener {
     }
     
     private void spawnTestyBois() {
-        int len = 400;
-        for (int i = 0; i < len; i++) {
-            Sprite sprite = new Sprite("PURPLEORB", Statc.intRandom(-1000, 1000), 
-                Statc.intRandom(-1000, 1000), 8, 8, 4 + 0 * sheet.width, w) {
-                @Override
-                protected void tick() {
-                    this.resistance = 1f;
-                }
-
-                @Override
-                protected void render(Screen s) {
-
-                }
-                
-                @Override
-                protected void onCollision(Entity with) {
-                    damage(10, with);
-                }
-                
-                @Override
-                protected void onDie(Entity source) {
-                    w.addEntity(new DroppedItem(x, y, Item.PURPLEORB, w));
-                    if (Statc.intRandom(0, 5) == 0) {
-                        w.addEntity(new DroppedItem(x, y + 10, Item.RAINBOWSHARD, w));
-                    }
-                }
-
-            };
-            w.addEntity(sprite);
-            sprite.enableCollision();
+        int limit = 400; 
+        for (int i = 0; i < limit; i++) {
+            Garble garb = new Garble(Statc.intRandom(-1000, 1000), 
+                                     Statc.intRandom(-1000, 1000), w);
+            garb.enableCollision();
+            w.addEntity(garb);
         }
     }
 
@@ -229,6 +211,9 @@ public class Main extends ABFrame implements KeyToggleListener {
                         e.getBounds().height);
             });
         }
+        
+        if (pause) pauseLabel.show();
+        else pauseLabel.hide();
         
         grphcs.drawImage(image, 0, 0, f.getWidth(), f.getHeight(), f);
     }

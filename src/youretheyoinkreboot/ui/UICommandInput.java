@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
-import java.util.ConcurrentModificationException;
 import youretheyoinkreboot.core.Main;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
@@ -53,7 +52,6 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                             Yoink testEnemy = new Yoink("ANGRYBOI", Statc.intRandom(p.getX() - 1000, p.getX() + 1000), Statc.intRandom(p.getY() - 1000, p.getY() + 1000), 16, 0, w) {
                                 @Override
                                 protected void tick() {
-                                    this.maxSpeed = 2;
                                     boolean up = false;
                                     boolean down = false;
                                     boolean left = false;
@@ -61,14 +59,14 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                                     if (p.getX() + p.getWidth() - 1 < this.x) {
                                         thrustLeft();
                                         left = true;
-                                    } else if (p.getX() > this.x) {
+                                    } else if (p.getX() + 1 > this.x) {
                                         thrustRight();
                                         right = true;
                                     }
                                     if (p.getY() + p.getHeight() - 1 < this.y) {
                                         thrustUp();
                                         up = true;
-                                    } else if (p.getY() > this.y) {
+                                    } else if (p.getY() + 1 > this.y) {
                                         thrustDown();
                                         down = true;
                                     }
@@ -96,7 +94,7 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
 
                                 @Override
                                 protected void onCollision(Entity with) {
-                                    if (!with.id.equals(this.id) && damageStagger % 16 == 0) {
+                                    if (!with.id.equals(this.id) /*&& damageStagger % 16 == 0*/) {
                                         with.damage(damageMod, this);
                                     }
                                     damageStagger++;
@@ -107,6 +105,7 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                             testEnemy.setDamageMod(Statc.intRandom(1, 5));
                             testEnemy.setKnockback(1);
                             testEnemy.enableCollision();
+                            testEnemy.setMaxSpeed(7);
                             w.addEntity(testEnemy);
                         }
                         UIControl.MSG_DISP.showMessage("DEBUG(CMD): spawned " + times + " angryboi(s)", 0x00FF00, 5000);
@@ -126,6 +125,20 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                         currentCommand = "KILL:PLAYER";
                         processCommand();
                         return;
+                    case "SETMAXHP": 
+                        if (args.length > 1) {
+                            p.setMaxHitPoints(Integer.parseInt(args[1]));
+                        } else {
+                            UIControl.MSG_DISP.showMessage("DEBUG(CMD): SETMAXHP failed; missing arg 2", 0xFF0000, 5000);
+                        }
+                        break;
+                    case "SETMAXSPEED":
+                        if (args.length > 1) {
+                            p.setMaxSpeed(Integer.parseInt(args[1]));
+                        } else {
+                            UIControl.MSG_DISP.showMessage("DEBUG(CMD): SEMAXSPEED failed; missing arg 2", 0xFF0000, 5000);
+                        }
+                        break;
                 }
                 break;
             case "KILL":

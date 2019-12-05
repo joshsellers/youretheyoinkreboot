@@ -9,7 +9,7 @@ import java.awt.Toolkit;
  */
 public class Screen {
 
-    public final static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    private final static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     public final static int WIDTH = screenSize.width;
     public final static int HEIGHT = screenSize.height - 35;
     public final static int SCALE = 2;
