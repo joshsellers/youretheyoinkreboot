@@ -29,14 +29,12 @@ public class Inventory {
             
             for (int i = 0; i < INV_SIZE; i++) {
                 if (items[i][0] == id && Item.ITEMS[items[i][0]].stackable) {
-                    Item.ITEMS[id].activateHoldEffects(parent);
                     items[i][1] += amount;
                     return;
                 }
             }
             for (int i = 0; i < INV_SIZE; i++) {
                 if (items[i][0] == Item.PLACEHOLDER.id) {
-                    Item.ITEMS[id].activateHoldEffects(parent);
                     items[i][0] = id;
                     items[i][1] = 1;
                     addItem(id, amount - 1);
@@ -51,12 +49,12 @@ public class Inventory {
             for (int i = 0; i < INV_SIZE; i++) {
                 if (items[i][0] == id) {
                     if (items[i][1] > 1) {
-                        Item.ITEMS[id].deactivateHoldEffects(parent);
+                        if (isEquipped(i)) Item.ITEMS[id].deactivateHoldEffects(parent);
                         items[i][1]--;
                         removeItem(id, amount - 1);
                         return;
                     } else if (items[i][1] == 1) {
-                        Item.ITEMS[id].deactivateHoldEffects(parent);
+                        if (isEquipped(i)) Item.ITEMS[id].deactivateHoldEffects(parent);
                         items[i][0] = Item.PLACEHOLDER.id;
                         items[i][1] = 0;
                         if (amount > 1) removeItem(id, amount - 1);
@@ -82,6 +80,7 @@ public class Inventory {
             for (int i = 0; i < equipped.length; i++) {
                 if (equipped[i] == -1) {
                     equipped[i] = index;
+                    Item.ITEMS[items[equipped[i]][0]].activateHoldEffects(parent);
                     return;
                 }
             }
@@ -93,6 +92,7 @@ public class Inventory {
     public void deEquip(int index) {
         for (int i = 0; i < equipped.length; i++) {
             if (equipped[i] == index) {
+                Item.ITEMS[items[equipped[i]][0]].deactivateHoldEffects(parent);
                 equipped[i] = -1;
                 return;
             }

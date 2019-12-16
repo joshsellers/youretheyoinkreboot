@@ -11,7 +11,7 @@ import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.Entity;
 import youretheyoinkreboot.world.entities.Player;
-import youretheyoinkreboot.world.entities.Yoink;
+import youretheyoinkreboot.world.entities.AngryYoink;
 import youretheyoinkreboot.world.items.Item;
 
 /**
@@ -49,74 +49,8 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                     case "ANGRYBOI":
                         int times = 1;
                         if (args.length > 1) times = Integer.parseInt(args[1]);
-                        boolean attackMethod = false;
                         for (int i = 0; i < times; i++) {
-                            Yoink testEnemy = new Yoink("ANGRYBOI", Statc.intRandom(p.getX() - 1000, p.getX() + 1000), Statc.intRandom(p.getY() - 1000, p.getY() + 1000), 16, 0, w) {
-                                @Override
-                                protected void tick() {
-                                    boolean up = false;
-                                    boolean down = false;
-                                    boolean left = false;
-                                    boolean right = false;
-                                    
-                                    int dist = 1;
-                                    if (attackMethod) dist = 100;
-                                    
-                                    if (p.getX() + (p.getWidth() / 2) + dist < this.x + (getWidth() / 2)) {
-                                        thrustLeft();
-                                        left = true;
-                                    } else if (p.getX() + (p.getWidth() / 2) - dist + 1 > this.x + (this.getWidth() / 2)) {
-                                        thrustRight();
-                                        right = true;
-                                    }
-                                    if (p.getY() + (p.getHeight() / 2) + dist < this.y + (this.getHeight() / 2)) {
-                                        thrustUp();
-                                        up = true;
-                                    } else if (p.getY() + (p.getHeight() / 2) - dist + 1 > this.y + (this.getHeight() / 2)) {
-                                        thrustDown();
-                                        down = true;
-                                    }
-
-                                    if (up && left) {
-                                        movingDir = 0;
-                                    } else if (up && right) {
-                                        movingDir = 2;
-                                    } else if (down && right) {
-                                        movingDir = 4;
-                                    } else if (down && left) {
-                                        movingDir = 6;
-                                    } else if (up) {
-                                        movingDir = 1;
-                                    } else if (right) {
-                                        movingDir = 3;
-                                    } else if (down) {
-                                        movingDir = 5;
-                                    } else if (left) {
-                                        movingDir = 7;
-                                    }
-                                    
-                                    if (attackMethod && !(left || right || up || down)) {
-                                        targetX = p.getX();
-                                        targetY = p.getY();
-                                        if (damageStagger % 32 == 0) {
-                                            this.inv.useItem(inv.getEquipped()[0]);
-                                        }
-                                        damageStagger++;
-                                    } else {
-                                        damageStagger++;
-                                    }
-                                    
-                                }
-
-                                private int damageStagger = 0;
-
-                                @Override
-                                protected void onCollision(Entity with) {
-                                    if (!with.id.equals(this.id) && damageStagger % 8 == 0) {
-                                        with.damage(damageMod, this);
-                                    }
-                                }
-                            };
+                            AngryYoink testEnemy = new AngryYoink(Statc.intRandom(p.getX() - 1000, p.getX() + 1000), Statc.intRandom(p.getY() - 1000, p.getY() + 1000), Statc.intRandom(0, 1) == 0, p);
 
                             testEnemy.setColor(Statc.intRandom(0xFF0000, 0xFF1010));
                             testEnemy.setDamageMod(Statc.intRandom(1, 5));

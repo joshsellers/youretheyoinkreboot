@@ -32,15 +32,14 @@ public class Main extends ABFrame implements KeyToggleListener {
     
     /* TODO by v0.1:
     *  - set Player.movingDir based on mouse coords when aiming proj. item
-    *  - add enemies
-    *  - add colored orbs as distinct class
-    *    = make orbs generate as player travels
+    *  √ add enemies
+    *  √ add colored orbs as distinct class
     *    = increase value of orbs as distance from spawn 
     *  - make rainbow shards define their color upon contruction 
     *    = define a relationship between RGB value and stat changes
     *  - properly implement ammo
     */
-    public final static String VERSION = "0.0996";
+    public final static String VERSION = "0.0997";
     
     public static boolean pause = false;
     

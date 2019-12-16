@@ -24,6 +24,8 @@ public class UIInventoryInterface extends UIObject {
         super((byte) 0x02, x, y);
         this.source = source;
         this.m = m;
+        
+        this.width = 22;
     }
 
     @Override
@@ -53,6 +55,11 @@ public class UIInventoryInterface extends UIObject {
 
     @Override
     protected void draw(Graphics g) {
+        g.setColor(Color.magenta.darker().darker().darker().darker());
+        g.fillRect(x-3, y-3, width+2, height+5);
+        g.setColor(Color.magenta.darker().darker());
+        g.fillRect(x-2, y-2, width, height+3);
+        
         int j = 0;
         for (int i = 0; i < Inventory.INV_SIZE; i++) {
             if (source.getItem(i)[0] != Item.PLACEHOLDER.id) {
@@ -66,6 +73,8 @@ public class UIInventoryInterface extends UIObject {
                 j++;
             }
         }
+        
+        height = (12 * j) - 2;
     }
     
     public Inventory getSourceInventory() {
@@ -83,7 +92,9 @@ public class UIInventoryInterface extends UIObject {
         int yTile = (tile / (sheet.width)) << Screen.SHIFT;
         for (int ya = 0; ya < icon.getHeight(); ya++) {
             for (int xa = 0; xa < icon.getWidth(); xa++) {
-                icon.setRGB(xa, ya, sheet.pixels[(xTile + xa) + (yTile + ya) * (sheet.width * SpriteSheet.TILE_SIZE)]);
+                if (sheet.pixels[(xTile + xa) + (yTile + ya) * (sheet.width * SpriteSheet.TILE_SIZE)] != 0xff000001) {
+                    icon.setRGB(xa, ya, sheet.pixels[(xTile + xa) + (yTile + ya) * (sheet.width * SpriteSheet.TILE_SIZE)]);
+                }
             }
         }
         

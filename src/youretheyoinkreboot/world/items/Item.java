@@ -29,16 +29,22 @@ public abstract class Item {
         @Override
         public void use(Yoink holder) {}
     };
-    public static final Item RAINBOWSHARD = new Item(1, 2 + 0 * 32, "Rainbow Shard", TYPE_CONSUMABLE, true) {
+    public static final Item RAINBOWSHARD = new Item(1, 2 + 0 * 32, "Rainbow Shard", TYPE_OTHER, true) {
+        public int color = Statc.intRandom(0x000000, 0xffffff);//this big dum
+        
         @Override
-        public void activateHoldEffects(Yoink holder) {}
+        public void activateHoldEffects(Yoink holder) {
+            holder.setColor(color);
+        }
 
         @Override
-        public void deactivateHoldEffects(Yoink holder) {}
+        public void deactivateHoldEffects(Yoink holder) {
+            holder.setColor(0x555555);
+        }
 
         @Override
         public void use(Yoink holder) {
-            holder.setColor(Statc.intRandom(0xFF000000, 0xFFFFFFFF));
+            
         }
     };
     public static final Item PURPLEORB = new Item(2, 4 + 0 * 32, "Purple Orb", TYPE_OTHER, true) {
