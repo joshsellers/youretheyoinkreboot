@@ -12,6 +12,7 @@ import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.Entity;
 import youretheyoinkreboot.world.entities.Player;
 import youretheyoinkreboot.world.entities.Yoink;
+import youretheyoinkreboot.world.items.Item;
 
 /**
  *
@@ -48,6 +49,7 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                     case "ANGRYBOI":
                         int times = 1;
                         if (args.length > 1) times = Integer.parseInt(args[1]);
+                        boolean attackMethod = false;
                         for (int i = 0; i < times; i++) {
                             Yoink testEnemy = new Yoink("ANGRYBOI", Statc.intRandom(p.getX() - 1000, p.getX() + 1000), Statc.intRandom(p.getY() - 1000, p.getY() + 1000), 16, 0, w) {
                                 @Override
@@ -56,17 +58,21 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                                     boolean down = false;
                                     boolean left = false;
                                     boolean right = false;
-                                    if (p.getX() + p.getWidth() - 1 < this.x) {
+                                    
+                                    int dist = 1;
+                                    if (attackMethod) dist = 100;
+                                    
+                                    if (p.getX() + (p.getWidth() / 2) + dist < this.x + (getWidth() / 2)) {
                                         thrustLeft();
                                         left = true;
-                                    } else if (p.getX() + 1 > this.x) {
+                                    } else if (p.getX() + (p.getWidth() / 2) - dist + 1 > this.x + (this.getWidth() / 2)) {
                                         thrustRight();
                                         right = true;
                                     }
-                                    if (p.getY() + p.getHeight() - 1 < this.y) {
+                                    if (p.getY() + (p.getHeight() / 2) + dist < this.y + (this.getHeight() / 2)) {
                                         thrustUp();
                                         up = true;
-                                    } else if (p.getY() + 1 > this.y) {
+                                    } else if (p.getY() + (p.getHeight() / 2) - dist + 1 > this.y + (this.getHeight() / 2)) {
                                         thrustDown();
                                         down = true;
                                     }
@@ -88,16 +94,27 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                                     } else if (left) {
                                         movingDir = 7;
                                     }
+                                    
+                                    if (attackMethod && !(left || right || up || down)) {
+                                        targetX = p.getX();
+                                        targetY = p.getY();
+                                        if (damageStagger % 32 == 0) {
+                                            this.inv.useItem(inv.getEquipped()[0]);
+                                        }
+                                        damageStagger++;
+                                    } else {
+                                        damageStagger++;
+                                    }
+                                    
                                 }
 
                                 private int damageStagger = 0;
 
                                 @Override
                                 protected void onCollision(Entity with) {
-                                    if (!with.id.equals(this.id) /*&& damageStagger % 16 == 0*/) {
+                                    if (!with.id.equals(this.id) && damageStagger % 8 == 0) {
                                         with.damage(damageMod, this);
                                     }
-                                    damageStagger++;
                                 }
                             };
 
@@ -106,6 +123,8 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                             testEnemy.setKnockback(1);
                             testEnemy.enableCollision();
                             testEnemy.setMaxSpeed(7);
+                            testEnemy.getInventory().addItem(Item.TPLAUNCHER.id, 1);
+                            testEnemy.getInventory().equip(0);
                             w.addEntity(testEnemy);
                         }
                         UIControl.MSG_DISP.showMessage("DEBUG(CMD): spawned " + times + " angryboi(s)", 0x00FF00, 5000);

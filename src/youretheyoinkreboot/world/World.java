@@ -6,7 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.ui.UIControl;
+import static youretheyoinkreboot.ui.UIControl.MSG_DISP;
 import youretheyoinkreboot.world.entities.Entity;
+import youretheyoinkreboot.world.entities.Garble;
+import youretheyoinkreboot.world.entities.Player;
 import youretheyoinkreboot.world.particles.Particle;
 import youretheyoinkreboot.world.particles.ParticleHandler;
 
@@ -87,6 +90,60 @@ public class World {
         } catch (java.util.ConcurrentModificationException ex) {
             UIControl.MSG_DISP.showMessage("ERROR: " + ex.getLocalizedMessage() + ", CODE 3", 0xFF0000, 5000);
         }
+    }
+    
+    private long staggerBoi;
+    private long nextInterval = Statc.intRandom(0, 650);
+    private final int sw = Screen.WIDTH / Screen.SCALE;
+    private final int sh = Screen.HEIGHT / Screen.SCALE;
+    public void generateObjects(Player p) {
+        int x = p.getX();
+        int y = p.getY();
+        boolean nx = true;
+        boolean ny = true;
+        
+        if (p.getX() < p.getLeftExtreme()) {
+            x -= sw;
+        } else if (p.getX() > p.getRightExtreme()) {
+            x += sw;
+        } else nx = false;
+        
+        if (p.getY() < p.getNorthExtreme()) {
+            y -= sh;
+        } else if (p.getY() > p.getSouthExtreme()) {
+            y += sh;
+        } else ny = false;
+        
+        boolean n = nx || ny;
+        
+        if (n) {
+            int dfc = (int) Math.sqrt(Math.pow((p.getX()), 2) + Math.pow(p.getY(), 2));
+            MSG_DISP.showMessage("DEBUG(WORLDGEN): PDFC " + dfc, 0x00FF11, 10);
+        }
+        
+        if (n && staggerBoi >= nextInterval) {
+            MSG_DISP.showMessage("DEBUG(WORLDGEN): SPAWNING GARBLE", 0x00FF11,5000);
+            
+            if (nx) addGarbles(x, p.getY(), false);
+            if (ny) addGarbles(p.getX(), y, true);
+            
+            nextInterval = staggerBoi + Statc.intRandom(0, 150);
+            staggerBoi++;
+        } else {
+            staggerBoi++;
+        }
+    }
+    
+    private void addGarbles(int x, int y, boolean dir) {
+            if (!dir) {
+                y += Statc.intRandom(-sh/2, sh/2);
+            } else {
+                x += Statc.intRandom(-sw/2, sw/2);
+            }
+
+            Garble garb = new Garble(x, y, this);
+            garb.enableCollision();
+            addEntity(garb);
     }
     
     private void drawBackground(int xa, int ya, Screen s) {

@@ -76,6 +76,10 @@ public abstract class Item {
                 int mx = m.currentCoordsInWorld()[0];
                 int my = m.currentCoordsInWorld()[1];
                 p.getWorld().addParticle(new Projectile(p.getX() + p.getWidth()/2 - 4, p.getY() + p.getHeight()/2 - 4, mx, my, Projectile.TYPE_TEST, p));
+            } else {
+                int mx = holder.getTargetX();
+                int my = holder.getTargetY();
+                holder.getWorld().addParticle(new Projectile(holder.getX() + holder.getWidth()/2 - 4, holder.getY() + holder.getHeight()/2 - 4, mx, my, Projectile.TYPE_TEST, holder));
             }
         }
     };

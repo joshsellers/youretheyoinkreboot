@@ -84,6 +84,8 @@ public abstract class Yoink extends AnimatedSprite {
     protected Inventory inv;
     
     protected int movingDir;
+    
+    protected int targetX, targetY;
 
     public Yoink(String id, int x, int y, int size, int tileBase, World world) {
         super(id, x, y, size, size, SPRITE_INDICES[0], 125, world);
@@ -132,6 +134,14 @@ public abstract class Yoink extends AnimatedSprite {
     
     public Inventory getInventory() {
         return inv;
+    }
+    
+    public int getTargetX() {
+        return targetX;
+    }
+    
+    public int getTargetY() {
+        return targetY;
     }
     
 }

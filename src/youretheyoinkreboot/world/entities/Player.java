@@ -18,6 +18,11 @@ public class Player extends Yoink implements KeyToggleListener {
     
     private Key k;
     private Mouse m;
+    
+    private int leftExt = 0;
+    private int rightExt = 0;
+    private int upExt = 0;
+    private int downExt = 0;
 
     public Player(int x, int y, Key k, Mouse m, World world) {
         super("PLAYER", x, y, 16, 0, world);
@@ -33,6 +38,25 @@ public class Player extends Yoink implements KeyToggleListener {
 
     @Override
     protected void tick() {
+
+        if (isMoving()) {
+            this.w.generateObjects(this);
+            if (this.getY() < this.getNorthExtreme()) {
+                upExt = this.getY();
+            } else if (this.getY() > this.getSouthExtreme()) {
+                downExt = this.getY();
+            }
+            if (this.getX() < this.getLeftExtreme()) {
+                leftExt = this.getX();
+            } else if (this.getX() > this.getRightExtreme()) {
+                rightExt = this.getX();
+            }
+
+        }
+        
+        //youretheyoinkreboot.ui.UIControl.MSG_DISP.showMessage(String.valueOf(upExt + " " + downExt + " " + leftExt + " " + rightExt), 0xff0000, 10);
+        
+        
         if (maxSpeed <= 5) drag = 0;
         //boolean lookAtCursor = Item.ITEMS[getInventory().getEquipped()[0]].type == Item.TYPE_RANGED;
         
@@ -112,6 +136,22 @@ public class Player extends Yoink implements KeyToggleListener {
     
     public Mouse getMouseInterface() {
         return m;
+    }
+    
+    public int getLeftExtreme() {
+        return this.leftExt;
+    }
+    
+    public int getRightExtreme() {
+        return this.rightExt;
+    }
+    
+    public int getNorthExtreme() {
+        return this.upExt;
+    }
+    
+    public int getSouthExtreme() {
+        return this.downExt;
     }
     
 }

@@ -40,7 +40,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     *    = define a relationship between RGB value and stat changes
     *  - properly implement ammo
     */
-    public final static String VERSION = "0.0993";
+    public final static String VERSION = "0.0996";
     
     public static boolean pause = false;
     
@@ -98,7 +98,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         
         w = new World(s);
         
-        p = new Player(0, -1200, k, m, w);
+        p = new Player(0, 0, k, m, w);
         p.enableCollision();
         w.addEntity(p);
         
@@ -107,9 +107,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         cam.hide();
         cam.track(p);
         cam.updateScreen();
-    
-        spawnTestyBois();
-        
+            
         versionLabel = new UITextLabel("V" + VERSION, 10, 20);
         UIControl.addUIObject(versionLabel);
         fpsMeter = new UITextLabel(fps, 10, 32);
