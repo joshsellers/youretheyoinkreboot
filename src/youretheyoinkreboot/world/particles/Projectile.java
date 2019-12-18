@@ -2,7 +2,6 @@ package youretheyoinkreboot.world.particles;
 
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.ui.UIControl;
-import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.Entity;
 import youretheyoinkreboot.world.items.DroppedItem;
 import youretheyoinkreboot.world.items.Item;
@@ -16,7 +15,7 @@ public class Projectile extends Particle {
     //format: VELOCITY, DAMAGE, SPRITE
     public static final int[][] TYPE_DATA = new int[][] {
         {8, 20, 0},                 //TYPE_TEST
-        {6, 10, Item.PURPLEORB.tile}//TYPE_PURPLEORB
+        {4, 6, Item.PURPLEORB.tile}//TYPE_PURPLEORB
     };
     
     public static final int TYPE_TEST = 0;

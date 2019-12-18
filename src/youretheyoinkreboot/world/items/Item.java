@@ -36,7 +36,6 @@ public abstract class Item {
             if (holder.getInventory().getItem(index)[2] == 0) {
                 int col = Statc.intRandom(0x000000, 0xffffff);
                 holder.getInventory().getItem(index)[2] = col;
-                setDescription("Applies hue of #" + Integer.toHexString(col) + " when equipped");
             }
             holder.setColor(holder.getColor() | holder.getInventory().getItem(index)[2]);
         }
@@ -120,8 +119,30 @@ public abstract class Item {
                     int my = m.currentCoordsInWorld()[1];
                     p.getWorld().addParticle(new Projectile(p.getX() + p.getWidth() / 2 - 4, p.getY() + p.getHeight() / 2 - 4, mx, my, Projectile.TYPE_PURPLEORB, p));
                 } else {
-                    int mx = holder.getTargetX();
-                    int my = holder.getTargetY();
+                    int xmod = 0;
+                    int ymod = 0;
+                    if (holder.isMoving()) {
+                        int angle = Statc.intRandom(60, 150);
+                        switch (holder.getMovingDirection()) {
+                            case 1:
+                                ymod = -angle;
+                                break;
+                            case 5:
+                                ymod = +angle;
+                                break;
+                            case 7:
+                                xmod = -angle;
+                                break;
+                            case 3:
+                                xmod = +angle;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    
+                    int mx = (int) (holder.getTargetX() + xmod);
+                    int my = (int) (holder.getTargetY() + ymod);
                     holder.getWorld().addParticle(new Projectile(holder.getX() + holder.getWidth() / 2 - 4, holder.getY() + holder.getHeight() / 2 - 4, mx, my, Projectile.TYPE_PURPLEORB, holder));
                 }
                 holder.getInventory().removeItem(PURPLEORB.id, 1);

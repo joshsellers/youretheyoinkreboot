@@ -144,4 +144,8 @@ public abstract class Yoink extends AnimatedSprite {
         return targetY;
     }
     
+    public int getMovingDirection() {
+        return movingDir;
+    }
+    
 }

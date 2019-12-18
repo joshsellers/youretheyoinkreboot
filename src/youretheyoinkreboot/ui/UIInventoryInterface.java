@@ -49,6 +49,10 @@ public class UIInventoryInterface extends UIObject {
                         } else if (m.lastClickedButton() == 3) {
                             int xr = source.getParent().getX() + Statc.intRandom(-20, 20);
                             int yr = source.getParent().getY() + Statc.intRandom(-20, 20);
+                            while (source.getParent().getBounds().contains(xr, yr)) {
+                                xr = source.getParent().getX() + Statc.intRandom(-20, 20);
+                                yr = source.getParent().getY() + Statc.intRandom(-20, 20);
+                            }
                             source.getParent().getWorld().addEntity(new DroppedItem(xr, yr, Item.ITEMS[source.getItem(i)[0]], source.getParent().getWorld()));
                             source.removeItem(source.getItem(i)[0], 1);
                         }

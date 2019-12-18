@@ -39,7 +39,7 @@ public class Garble extends AnimatedSprite {
     @Override
     protected void onDie(Entity source) {
         w.addEntity(new DroppedItem(x, y, Item.PURPLEORB, w));
-        if (Statc.intRandom(0, 5) == 0) {
+        if (Statc.intRandom(0, 10) == 0) {
             w.addEntity(new DroppedItem(x, y + 10, Item.RAINBOWSHARD, w));
         }
     }

@@ -1,6 +1,5 @@
 package youretheyoinkreboot.world.entities;
 
-import com.amp.mathem.Statc;
 import youretheyoinkreboot.world.items.Item;
 
 /**
@@ -12,9 +11,9 @@ public class AngryYoink extends Yoink {
     public final static boolean ATTACKMETHOD_RAM = false;
     public final static boolean ATTACKMETHOD_RANGED = true;
     
-    private final boolean attackMethod;
+    private boolean attackMethod;
     
-    private Player p;
+    private final Player p;
 
     public AngryYoink(int x, int y, boolean attackMethod, Player p) {
         super("ANGRYBOI", x, y, 16, 0, p.getWorld());
@@ -34,14 +33,14 @@ public class AngryYoink extends Yoink {
             dist = 100;
         }
 
-        if (p.getX() + (p.getWidth() / 2) + dist < this.x + (getWidth() / 2)) {
+        if (p.getX() + (p.getWidth() / 2) + dist - 1< this.x + (getWidth() / 2)) {
             thrustLeft();
             left = true;
         } else if (p.getX() + (p.getWidth() / 2) - dist + 1 > this.x + (this.getWidth() / 2)) {
             thrustRight();
             right = true;
         }
-        if (p.getY() + (p.getHeight() / 2) + dist < this.y + (this.getHeight() / 2)) {
+        if (p.getY() + (p.getHeight() / 2) + dist - 1 < this.y + (this.getHeight() / 2)) {
             thrustUp();
             up = true;
         } else if (p.getY() + (p.getHeight() / 2) - dist + 1 > this.y + (this.getHeight() / 2)) {
@@ -72,6 +71,9 @@ public class AngryYoink extends Yoink {
             targetY = p.getY();
             if (damageStagger % 32 == 0) {
                 this.inv.useItem(inv.getEquipped()[0]);
+                if (!getInventory().hasItem(Item.PURPLEORB)) {
+                    attackMethod = ATTACKMETHOD_RAM;
+                }
             }
             damageStagger++;
         } else {
@@ -85,6 +87,9 @@ public class AngryYoink extends Yoink {
     protected void onCollision(Entity with) {
         if (!with.id.equals(this.id) && damageStagger % 8 == 0) {
             with.damage(damageMod, this);
+            if (getInventory().hasItem(Item.PURPLEORB)) {
+                attackMethod = ATTACKMETHOD_RANGED;
+            }
         }
     }
     

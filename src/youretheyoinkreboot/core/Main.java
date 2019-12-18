@@ -1,5 +1,6 @@
 package youretheyoinkreboot.core;
 
+import com.amp.mathem.Statc;
 import com.amp.pre.ABFrame;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -19,6 +20,7 @@ import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.Camera;
 import youretheyoinkreboot.world.entities.Player;
+import youretheyoinkreboot.world.items.*;
 import youretheyoinkreboot.world.particles.ParticleHandler;
 
 /**
@@ -28,15 +30,14 @@ import youretheyoinkreboot.world.particles.ParticleHandler;
 public class Main extends ABFrame implements KeyToggleListener {
     
     /* TODO by v0.1:
-    *  - set Player.movingDir based on mouse coords when aiming proj. item
-    *  - add enemies
+    *  √ add enemies
     *  √ add colored orbs as distinct class
     *    = increase value of orbs as distance from spawn 
     *  √ make rainbow shards define their color upon contruction 
     *    = define a relationship between RGB value and stat changes
     *  √ properly implement ammo
     */
-    public final static String VERSION = "0.0998";
+    public final static String VERSION = "0.0999";
     
     public static boolean pause = false;
     
@@ -131,7 +132,9 @@ public class Main extends ABFrame implements KeyToggleListener {
         
         commandLine = new UICommandInput(((Screen.WIDTH / Screen.SCALE) / 2) - 2, (Screen.HEIGHT / Screen.SCALE) - 40, p);
         commandLine.hide();
-        UIControl.addUIObject(commandLine);        
+        UIControl.addUIObject(commandLine);
+        
+        w.addEntity(new DroppedItem(Statc.intRandom(-200, 200), Statc.intRandom(-200, 200), Item.ORBLAUNCHER, w));
     }
 
     @Override
@@ -205,8 +208,9 @@ public class Main extends ABFrame implements KeyToggleListener {
         if (keyCode == KeyEvent.VK_ESCAPE) pause = !pause;
         
         if (keyCode == KeyEvent.VK_F3) showDebug = !showDebug;
-        if (!commandLine.isVisible() && keyCode == k.i.keyCode) {
+        if (!commandLine.isVisible() && keyCode == k.z.keyCode) {
             ii.toggle();
+            pause = ii.isVisible();
         }
         
         if (keyCode == KeyEvent.VK_F4) {

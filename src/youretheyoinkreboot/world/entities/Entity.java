@@ -96,8 +96,8 @@ public abstract class Entity {
                         e.vx += Math.floor(((vx) * knockBack));
                         e.vy += Math.floor(((vy) * knockBack));
                     }
-                    vx = Math.floor(-((vx/2)));
-                    vy = Math.floor(-((vy/2)));
+                    vx = Math.round(-((vx/2)));
+                    vy = Math.round(-((vy/2)));
 
                     bounds.x = x;
                     bounds.y = y;
@@ -305,6 +305,14 @@ public abstract class Entity {
     
     public double getVelocity() {
         return Math.hypot(vx, vy);
+    }
+    
+    public double getXVelocity() {
+        return vx;
+    }
+    
+    public double getYVelocity() {
+        return vy;
     }
     
     public void setCameraTarget(boolean val, Camera cam) {

@@ -112,10 +112,26 @@ public class Inventory {
     }
     
     public boolean hasItem(Item item) {
-        for (int i = 0; i < items.length; i++) {
-            if (items[i][0] == item.id) return true;
+        for (int[] item1 : items) {
+            if (item1[0] == item.id) {
+                return true;
+            }
         }
         return false;
+    }
+    
+    public void clear() {
+        for (int[] item : items) {
+            for (int j = 0; j < item.length; j++) {
+                item[j] = 0;
+            }
+            item[0] = Item.PLACEHOLDER.id;
+        }
+        
+        for (int i = 0; i < equipped.length; i++) {
+            equipped[i] = -1;
+        }
+        equippedUseable = -1;
     }
     
     public int[] getItem(int index) {

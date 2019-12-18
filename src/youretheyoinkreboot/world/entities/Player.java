@@ -3,6 +3,7 @@ package youretheyoinkreboot.world.entities;
 import java.awt.Color;
 import java.awt.Graphics;
 import youretheyoinkreboot.core.gfx.Screen;
+import static youretheyoinkreboot.ui.UIControl.MSG_DISP;
 import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.util.Mouse;
@@ -130,6 +131,17 @@ public class Player extends Yoink implements KeyToggleListener {
         if (keyCode == k.e.keyCode) {
             inv.useItem(inv.getEquipped()[0]);
         }
+    }
+    
+    @Override
+    protected void onDie(Entity source) {
+        MSG_DISP.showMessage("You were killed by " + source.id, 0xEE2255, 5000);
+        this.addHP(this.getMaxHP());
+        x = 0;
+        y = 0;
+        this.setColor(0x000000);
+        this.getInventory().clear();
+        this.move();
     }
     
     public Key getKeyboardInterface() {

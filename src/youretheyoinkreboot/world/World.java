@@ -7,9 +7,11 @@ import java.util.List;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.ui.UIControl;
 import static youretheyoinkreboot.ui.UIControl.MSG_DISP;
+import youretheyoinkreboot.world.entities.AngryYoink;
 import youretheyoinkreboot.world.entities.Entity;
 import youretheyoinkreboot.world.entities.Garble;
 import youretheyoinkreboot.world.entities.Player;
+import youretheyoinkreboot.world.items.Item;
 import youretheyoinkreboot.world.particles.Particle;
 import youretheyoinkreboot.world.particles.ParticleHandler;
 
@@ -92,8 +94,15 @@ public class World {
         }
     }
     
-    private long staggerBoi;
-    private long nextInterval = Statc.intRandom(0, 650);
+    public static final int GARBLE_SPAWNRATE = 200;
+    public static final int ENEMY_SPAWNRATE = 2100;
+    
+    private long garbleStagger;
+    private long nextGarbleInterval = Statc.intRandom(0, GARBLE_SPAWNRATE);
+    
+    private long enemyStagger;
+    private long nextEnemyInterval = Statc.intRandom(0, ENEMY_SPAWNRATE);
+    
     private final int sw = Screen.WIDTH / Screen.SCALE;
     private final int sh = Screen.HEIGHT / Screen.SCALE;
     public void generateObjects(Player p) {
@@ -116,36 +125,67 @@ public class World {
         
         boolean n = nx || ny;
         
+        int dfc = (int) Math.sqrt(Math.pow((p.getX()), 2) + Math.pow(p.getY(), 2));
         if (n) {
-            int dfc = (int) Math.sqrt(Math.pow((p.getX()), 2) + Math.pow(p.getY(), 2));
             MSG_DISP.showMessage("DEBUG(WORLDGEN): PDFC " + dfc, 0x00FF11, 10);
         }
         
-        if (n && staggerBoi >= nextInterval) {
+        if (dfc > 7000 && enemyStagger >= nextEnemyInterval) {
+            MSG_DISP.showMessage("DEBUG(WORLDGEN): SPAWNING ENEMY", 0x00FF11, 5000);
+            
+            if (nx) addEnemies(x, p.getY(), false, p);
+            if (ny) addEnemies(p.getX(), y, true, p);
+            
+            nextEnemyInterval = enemyStagger + Statc.intRandom(0, ENEMY_SPAWNRATE);
+            enemyStagger++;
+        } else {
+            enemyStagger++;
+        }
+        
+        if (n && garbleStagger >= nextGarbleInterval) {
             MSG_DISP.showMessage("DEBUG(WORLDGEN): SPAWNING GARBLE", 0x00FF11,5000);
             
             if (nx) addGarbles(x, p.getY(), false);
             if (ny) addGarbles(p.getX(), y, true);
             
-            nextInterval = staggerBoi + Statc.intRandom(0, 150);
-            staggerBoi++;
+            nextGarbleInterval = garbleStagger + Statc.intRandom(0, GARBLE_SPAWNRATE);
+            garbleStagger++;
         } else {
-            staggerBoi++;
+            garbleStagger++;
         }
     }
     
-    private void addGarbles(int x, int y, boolean dir) {
-            if (!dir) {
-                y += Statc.intRandom(-sh/2, sh/2);
-            } else {
-                x += Statc.intRandom(-sw/2, sw/2);
-            }
-
-            Garble garb = new Garble(x, y, this);
-            garb.enableCollision();
-            addEntity(garb);
+    private void addEnemies(int x, int y, boolean dir, Player p) {
+        if (!dir) {
+            y += Statc.intRandom(-sh / 2, sh / 2);
+        } else {
+            x += Statc.intRandom(-sw / 2, sw / 2);
+        }
+ 
+        AngryYoink yoink = new AngryYoink(x, y, Statc.intRandom(0, 1) == 0, p);
+        yoink.setColor(Statc.intRandom(0xFF0000, 0xFF1010));
+        yoink.setDamageMod(Statc.intRandom(1, 5));
+        yoink.setKnockback(1);
+        yoink.enableCollision();
+        yoink.setMaxSpeed(7);
+        yoink.getInventory().addItem(Item.ORBLAUNCHER.id, 1);
+        yoink.getInventory().addItem(Item.PURPLEORB.id, Statc.intRandom(10, 75));
+        yoink.getInventory().equip(0);
+        addEntity(yoink);
     }
-    
+
+    private void addGarbles(int x, int y, boolean dir) {
+        if (!dir) {
+            y += Statc.intRandom(-sh / 2, sh / 2);
+        } else {
+            x += Statc.intRandom(-sw / 2, sw / 2);
+        }
+
+        Garble garb = new Garble(x, y, this);
+        garb.enableCollision();
+        addEntity(garb);
+    }
+
     private void drawBackground(int xa, int ya, Screen s) {
         moveBackground(s);
         int w = (Screen.WIDTH / Screen.SCALE);

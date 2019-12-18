@@ -57,7 +57,8 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                             testEnemy.setKnockback(1);
                             testEnemy.enableCollision();
                             testEnemy.setMaxSpeed(7);
-                            testEnemy.getInventory().addItem(Item.TPLAUNCHER.id, 1);
+                            testEnemy.getInventory().addItem(Item.ORBLAUNCHER.id, 1);
+                            testEnemy.getInventory().addItem(Item.PURPLEORB.id, Statc.intRandom(0, 15));
                             testEnemy.getInventory().equip(0);
                             w.addEntity(testEnemy);
                         }
