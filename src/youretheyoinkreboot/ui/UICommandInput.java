@@ -93,6 +93,13 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                             UIControl.MSG_DISP.showMessage("DEBUG(CMD): SEMAXSPEED failed; missing arg 2", 0xFF0000, 5000);
                         }
                         break;
+                    case "SETACCMOD":
+                        if (args.length > 1) {
+                            p.setAccelerationModifier(Integer.parseInt(args[1]));
+                        } else {
+                            UIControl.MSG_DISP.showMessage("DEBUG(CMD): SETACCMOD failed; missing arg 2", 0xFF0000, 5000);
+                        }
+                        break;
                 }
                 break;
             case "KILL":

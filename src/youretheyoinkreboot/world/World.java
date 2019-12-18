@@ -32,7 +32,6 @@ public class World {
     
     public EntityRemover remover;
     
-    
     public World(Screen s) {
         this.s = s;
         generateBackground(s);
@@ -127,7 +126,8 @@ public class World {
         
         int dfc = (int) Math.sqrt(Math.pow((p.getX()), 2) + Math.pow(p.getY(), 2));
         if (n) {
-            MSG_DISP.showMessage("DEBUG(WORLDGEN): PDFC " + dfc, 0x00FF11, 10);
+            //MSG_DISP.showMessage("DEBUG(WORLDGEN): PDFC " + dfc, 0x00FF11, 10);
+            p.setDistanceFromCenter(dfc);
         }
         
         if (dfc > 7000 && enemyStagger >= nextEnemyInterval) {

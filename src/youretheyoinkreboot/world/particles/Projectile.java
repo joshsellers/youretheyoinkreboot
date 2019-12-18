@@ -68,7 +68,7 @@ public class Projectile extends Particle {
         for (Entity e : w.getEntities()) {
             if (!(e instanceof DroppedItem) && e != source && e != this && e.isActive() && this.intersects(e) && e.collides()) {
                 this.die(e);
-                e.damage(damageMod, this);
+                e.damage(damageMod + source.getDamageMod(), this);
                 UIControl.MSG_DISP.showMessage("DEBUG: " + id + spawnTimeStamp + " hit " + e.id, 5000);
             }
         }

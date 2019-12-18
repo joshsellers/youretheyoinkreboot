@@ -8,7 +8,6 @@ import youretheyoinkreboot.util.Key;
 import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.World;
-import youretheyoinkreboot.world.items.Item;
 
 /**
  *
@@ -24,6 +23,9 @@ public class Player extends Yoink implements KeyToggleListener {
     private int rightExt = 0;
     private int upExt = 0;
     private int downExt = 0;
+    
+    private int dfc;
+    private int nextDist = 20_000;
 
     public Player(int x, int y, Key k, Mouse m, World world) {
         super("PLAYER", x, y, 16, 0, world);
@@ -120,10 +122,17 @@ public class Player extends Yoink implements KeyToggleListener {
     public void drawUI(Graphics g) {
         int w = 200;
         int h = 10;
+        int x = (((Screen.WIDTH / Screen.SCALE) / 2) - (w / 2));
+        int y = 10;
         g.setColor(Color.red.darker());
-        g.fillRect((((Screen.WIDTH / Screen.SCALE) / 2) - (w / 2)) - 1, 9, w + 2, h + 2);
+        g.fillRect(x - 1, y - 1, w + 2, h + 2);
         g.setColor(Color.red);
-        g.fillRect((((Screen.WIDTH / Screen.SCALE) / 2) - (w / 2)), 10, (int) (w * ((float)getHP()/(float)getMaxHP())), h);
+        g.fillRect(x, y, (int) (w * ((float)getHP()/(float)getMaxHP())), h);
+        
+        g.setColor(Color.green);
+        g.drawString("Distance from center: " + getDistanceFromCenter(), x + w + 8, y + 8);
+        g.drawString("Next milestone: " + getNextDistanceMilestone(), x + w + 8, y + 19);
+        g.drawString("Score: " + getScore(), x + w + 8, y + 31);
     }
 
     @Override
@@ -166,6 +175,34 @@ public class Player extends Yoink implements KeyToggleListener {
     
     public int getSouthExtreme() {
         return this.downExt;
+    }
+    
+    public void setDistanceFromCenter(int dfc) {
+        this.dfc = dfc;
+        if (dfc >= nextDist) {
+            int incr = (Integer.MAX_VALUE - dfc) / 65_000;
+            nextDist = dfc + incr;
+            MSG_DISP.showMessage("DEBUG(PSCORE): incr" + incr + " nextDist" + nextDist, 0x33FF55, 10000);
+        }
+    }
+    
+    public int getScore() {
+        return (int) (((((float) getDistanceFromCenter()) / 
+                ((float) getNextDistanceMilestone())) * 50f) + 
+                ((((float) getDistanceFromCenter()) / 
+                ((float) Integer.MAX_VALUE)) * 100 ) * 50f);
+    }
+    
+    public int getNextDistanceMilestone() {
+        return nextDist;
+    }
+    
+    public int getDistanceFromCenter() {
+        return dfc;
+    }
+    
+    public void setAccelerationModifier(int set) {
+        this.accMod = set;
     }
     
 }

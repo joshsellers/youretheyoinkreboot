@@ -32,12 +32,12 @@ public class Main extends ABFrame implements KeyToggleListener {
     /* TODO by v0.1:
     *  √ add enemies
     *  √ add colored orbs as distinct class
-    *    = increase value of orbs as distance from spawn 
+    *    ► increase value of orbs as distance from spawn 
     *  √ make rainbow shards define their color upon contruction 
-    *    = define a relationship between RGB value and stat changes
+    *    ► define a relationship between RGB value and stat changes
     *  √ properly implement ammo
     */
-    public final static String VERSION = "0.0999";
+    public final static String VERSION = "0.099975";
     
     public static boolean pause = false;
     
@@ -208,7 +208,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         if (keyCode == KeyEvent.VK_ESCAPE) pause = !pause;
         
         if (keyCode == KeyEvent.VK_F3) showDebug = !showDebug;
-        if (!commandLine.isVisible() && keyCode == k.z.keyCode) {
+        if (!commandLine.isVisible() && keyCode == k.g.keyCode) {
             ii.toggle();
             pause = ii.isVisible();
         }

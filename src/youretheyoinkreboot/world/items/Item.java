@@ -1,6 +1,8 @@
 package youretheyoinkreboot.world.items;
 
 import com.amp.mathem.Statc;
+import java.awt.Color;
+import java.util.Random;
 import static youretheyoinkreboot.ui.UIControl.MSG_DISP;
 import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.entities.Player;
@@ -33,9 +35,24 @@ public abstract class Item {
         
         @Override
         public void activateHoldEffects(Yoink holder, int index) {
-            if (holder.getInventory().getItem(index)[2] == 0) {
-                int col = Statc.intRandom(0x000000, 0xffffff);
+            if (holder instanceof Player && holder.getInventory().getItem(index)[2] == 0) {
+                Player plyr = ((Player) holder);
+                int pScore = plyr.getScore();
+                
+                int r = Statc.intRandom(0, (int)((((float) 255f)) * (((float) pScore) / 100f)));
+                int g = Statc.intRandom(0, (int)((((float) 255f)) * (((float) pScore) / 100f)));
+                int b = Statc.intRandom(0, (int)((((float) 255f)) * (((float) pScore) / 100f)));
+                int col = ((r & 0xFF) << 16) |
+                          ((g & 0xFF) << 8)  |
+                          ((b & 0xFF));
+                
                 holder.getInventory().getItem(index)[2] = col;
+                MSG_DISP.showMessage(r + " " + g + " " + b + " col" + Integer.toHexString(col), 0x00FF99, 5000);
+                /*TODO
+                * - divide colors by something like 10 to apply to stats;
+                *   = red-hp green-damageMod blue-maxSpeed
+                * - remove stat changes on deactivateHoldEffects
+                */
             }
             holder.setColor(holder.getColor() | holder.getInventory().getItem(index)[2]);
         }
