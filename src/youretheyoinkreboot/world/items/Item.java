@@ -1,6 +1,7 @@
 package youretheyoinkreboot.world.items;
 
 import com.amp.mathem.Statc;
+import static youretheyoinkreboot.ui.UIControl.MSG_DISP;
 import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.entities.Player;
 import youretheyoinkreboot.world.entities.Yoink;
@@ -16,30 +17,33 @@ public abstract class Item {
     public final static int TYPE_WEARABLE = 1;
     public final static int TYPE_USEABLE = 2;
     public final static int TYPE_OTHER = 4;
-    public final static int TYPE_RANGED = 5;
     public final static int TYPE_AMMO = 6;
     
-    public static final Item PLACEHOLDER = new Item(0, 0, "NULL", -1, false) {
+    public static final Item PLACEHOLDER = new Item(0, 0, "NULL/NULL", -1, false) {
         @Override
-        public void activateHoldEffects(Yoink holder) {}
+        public void activateHoldEffects(Yoink holder, int index) {}
 
         @Override
-        public void deactivateHoldEffects(Yoink holder) {}
+        public void deactivateHoldEffects(Yoink holder, int index) {}
 
         @Override
         public void use(Yoink holder) {}
     };
-    public static final Item RAINBOWSHARD = new Item(1, 2 + 0 * 32, "Rainbow Shard", TYPE_OTHER, true) {
-        public int color = Statc.intRandom(0x000000, 0xffffff);//this big dum
+    public static final Item RAINBOWSHARD = new Item(1, 2 + 0 * 32, "Rainbow Shard/Changes the holder's color when equipped", TYPE_OTHER, false) {
         
         @Override
-        public void activateHoldEffects(Yoink holder) {
-            holder.setColor(color);
+        public void activateHoldEffects(Yoink holder, int index) {
+            if (holder.getInventory().getItem(index)[2] == 0) {
+                int col = Statc.intRandom(0x000000, 0xffffff);
+                holder.getInventory().getItem(index)[2] = col;
+                setDescription("Applies hue of #" + Integer.toHexString(col) + " when equipped");
+            }
+            holder.setColor(holder.getColor() | holder.getInventory().getItem(index)[2]);
         }
 
         @Override
-        public void deactivateHoldEffects(Yoink holder) {
-            holder.setColor(0x555555);
+        public void deactivateHoldEffects(Yoink holder, int index) {
+            holder.setColor((holder.getColor() & ~holder.getInventory().getItem(index)[2]));
         }
 
         @Override
@@ -47,30 +51,36 @@ public abstract class Item {
             
         }
     };
-    public static final Item PURPLEORB = new Item(2, 4 + 0 * 32, "Purple Orb", TYPE_OTHER, true) {
+    public static final Item PURPLEORB = new Item(2, 4 + 0 * 32, "Purple Orb/Heals from 5 to 10 HP&nCan also be used as ammo for Purple Orb Cannon", TYPE_CONSUMABLE, true) {
         @Override
-        public void activateHoldEffects(Yoink holder) {
+        public void activateHoldEffects(Yoink holder, int index) {
 
         }
 
         @Override
-        public void deactivateHoldEffects(Yoink holder) {
+        public void deactivateHoldEffects(Yoink holder, int index) {
 
         }
 
         @Override
         public void use(Yoink holder) {
-
+            if (holder.getHP() < holder.getMaxHP()) {
+                int heal = Statc.intRandom(5, 10);
+                holder.addHP(heal);
+                if (holder instanceof Player) MSG_DISP.showMessage("+" + heal + " hp", 0x8800CC, 5000);
+                return;
+            }
+            if (holder instanceof Player) MSG_DISP.showMessage("No effect", 3000);
         }
     };
-    public static final Item TPLAUNCHER = new Item(3, 0, "Test Projectile Launcher", TYPE_RANGED, false) {
+    public static final Item TPLAUNCHER = new Item(3, 0, "Test Projectile Launcher/Shoots test projectiles", TYPE_USEABLE, false) {
         @Override
-        public void activateHoldEffects(Yoink holder) {
+        public void activateHoldEffects(Yoink holder, int index) {
 
         }
 
         @Override
-        public void deactivateHoldEffects(Yoink holder) {
+        public void deactivateHoldEffects(Yoink holder, int index) {
 
         }
 
@@ -89,11 +99,45 @@ public abstract class Item {
             }
         }
     };
+    public static final Item ORBLAUNCHER = new Item(4, 3 + 0 * 32, "Purple Orb Cannon/Launches Purple Orbs", TYPE_USEABLE, false) {
+        @Override
+        public void activateHoldEffects(Yoink holder, int index) {
+
+        }
+
+        @Override
+        public void deactivateHoldEffects(Yoink holder, int index) {
+
+        }
+
+        @Override
+        public void use(Yoink holder) {
+            if (holder.getInventory().hasItem(PURPLEORB)) {
+                if (holder instanceof Player) {
+                    Player p = (Player) holder;
+                    Mouse m = p.getMouseInterface();
+                    int mx = m.currentCoordsInWorld()[0];
+                    int my = m.currentCoordsInWorld()[1];
+                    p.getWorld().addParticle(new Projectile(p.getX() + p.getWidth() / 2 - 4, p.getY() + p.getHeight() / 2 - 4, mx, my, Projectile.TYPE_PURPLEORB, p));
+                } else {
+                    int mx = holder.getTargetX();
+                    int my = holder.getTargetY();
+                    holder.getWorld().addParticle(new Projectile(holder.getX() + holder.getWidth() / 2 - 4, holder.getY() + holder.getHeight() / 2 - 4, mx, my, Projectile.TYPE_PURPLEORB, holder));
+                }
+                holder.getInventory().removeItem(PURPLEORB.id, 1);
+            } else {
+                if (holder instanceof Player) MSG_DISP.showMessage("Not enough ammo!", 5000);
+            }
+        }
+        
+    };
     
     public final int id;
     public final int type;
     public final boolean stackable;
     public final String name;
+    private String desc;
+    private int longestLineIndex = 0;
     public final int tile;
     
     public Item(int id, int tile, String name, int type, boolean stackable) {
@@ -101,13 +145,43 @@ public abstract class Item {
         ITEMS[id] = this;
         this.id = id;
         this.tile = tile;
-        this.name = name;
+        this.name = name.split("/")[0];
+        this.desc = name.split("/")[1];
         this.type = type;
         this.stackable = stackable;
+        
+        if (desc.contains("&n")) {
+            String[] descLines = desc.split("&n");
+            for (int i = 0; i < descLines.length; i++) {
+                if (descLines[i].length() > descLines[longestLineIndex].length()) {
+                    longestLineIndex = i;
+                }
+            }
+        }
     }
     
-    public abstract void activateHoldEffects(Yoink holder);
-    public abstract void deactivateHoldEffects(Yoink holder);
+    public abstract void activateHoldEffects(Yoink holder, int index);
+    public abstract void deactivateHoldEffects(Yoink holder, int index);
     
     public abstract void use(Yoink holder);
+    
+    public String getDescription() {
+        return desc;
+    }
+    
+    public void setDescription(String desc) {
+        if (desc.contains("&n")) {
+            String[] descLines = desc.split("&n");
+            for (int i = 0; i < descLines.length; i++) {
+                if (descLines[i].length() > descLines[longestLineIndex].length()) {
+                    longestLineIndex = i;
+                }
+            }
+        }
+        this.desc = desc;
+    }
+    
+    public int getLongestDescriptionLineIndex() {
+        return this.longestLineIndex;
+    }
 }

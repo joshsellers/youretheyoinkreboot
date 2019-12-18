@@ -40,23 +40,27 @@ public class UINotificationDisplay extends UIObject {
     }
     
     public void showMessage(String msg, long dispTime) {
-        for (int i = 1; i < messages.length; i++) {
-            Message m = messages[i];
-            messages[i-1] = m;
+        if (((!msg.contains("ERROR") && !msg.contains("DEBUG")) || showDebug)) {
+            for (int i = 1; i < messages.length; i++) {
+                Message m = messages[i];
+                messages[i - 1] = m;
+            }
+            messages[messages.length - 1] = new Message(msg, dispTime);
+            Message newMsg = messages[messages.length - 1];
+            messageTimer.schedule(newMsg, newMsg.lifeTime);
         }
-        messages[messages.length-1] = new Message(msg, dispTime);
-        Message newMsg = messages[messages.length-1];
-        messageTimer.schedule(newMsg, newMsg.lifeTime);
     }
-    
+
     public void showMessage(String msg, int color, long dispTime) {
-        for (int i = 1; i < messages.length; i++) {
-            Message m = messages[i];
-            messages[i-1] = m;
+        if (((!msg.contains("ERROR") && !msg.contains("DEBUG")) || showDebug)) {
+            for (int i = 1; i < messages.length; i++) {
+                Message m = messages[i];
+                messages[i - 1] = m;
+            }
+            messages[messages.length - 1] = new Message(msg, color, dispTime);
+            Message newMsg = messages[messages.length - 1];
+            messageTimer.schedule(newMsg, newMsg.lifeTime);
         }
-        messages[messages.length-1] = new Message(msg, color, dispTime);
-        Message newMsg = messages[messages.length-1];
-        messageTimer.schedule(newMsg, newMsg.lifeTime);
     }
     
     public class Message extends TimerTask {

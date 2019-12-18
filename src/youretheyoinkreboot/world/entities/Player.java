@@ -34,6 +34,8 @@ public class Player extends Yoink implements KeyToggleListener {
         this.maxSpeed = 6;
         this.setMaxHitPoints(150);
         this.resistance = 2;
+        
+        this.setColor(0x000000);
     }
 
     @Override
@@ -84,10 +86,10 @@ public class Player extends Yoink implements KeyToggleListener {
             
         }*/
         
-        if (k.w.isPressed()) thrustUp();
-        else if (k.s.isPressed()) thrustDown();
-        if (k.a.isPressed()) thrustLeft();
-        else if (k.d.isPressed()) thrustRight();
+        if (k.w.isPressed()) moveUp();
+        else if (k.s.isPressed()) moveDown();
+        if (k.a.isPressed()) moveLeft();
+        else if (k.d.isPressed()) moveRight();
         
         while (getVelocity() > maxSpeed) {
             if (vx > 0) vx--;

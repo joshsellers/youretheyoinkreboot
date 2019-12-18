@@ -2,10 +2,7 @@ package youretheyoinkreboot.world.entities;
 
 import com.amp.mathem.Statc;
 import java.awt.Rectangle;
-import java.util.Timer;
-import java.util.TimerTask;
 import youretheyoinkreboot.core.gfx.Screen;
-import youretheyoinkreboot.ui.UIControl;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.particles.Particle;
 
@@ -125,23 +122,39 @@ public abstract class Entity {
         
     }
     
-    protected void thrustUp() {
+    protected void moveUp() {
         if (vy > -maxSpeed) vy -= accMod;
+    }
+    
+    protected void moveDown() {
+        if (vy < maxSpeed) vy += accMod;
+    }
+    
+    protected void moveLeft() {
+        if (vx > -maxSpeed) vx -= accMod;
+    }
+    
+    protected void moveRight() {
+        if (vx < maxSpeed) vx += accMod;
+    }
+    
+    protected void thrustUp() {
+        moveUp();
         thrustParticles(x + Statc.intRandom(0, width), y + Statc.intRandom(0, height));
     }
     
     protected void thrustDown() {
-        if (vy < maxSpeed) vy += accMod;
+        moveDown();
         thrustParticles(x + Statc.intRandom(0, width), y + Statc.intRandom(0, height));
     }
     
     protected void thrustLeft() {
-        if (vx > -maxSpeed) vx -= accMod;
+        moveLeft();
         thrustParticles(x + Statc.intRandom(0, width), y + Statc.intRandom(0, height));
     }
     
     protected void thrustRight() {
-        if (vx < maxSpeed) vx += accMod;
+        moveRight();
         thrustParticles(x + Statc.intRandom(0, width), y + Statc.intRandom(0, height));
         
     }

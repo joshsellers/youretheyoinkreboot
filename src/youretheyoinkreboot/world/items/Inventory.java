@@ -11,13 +11,13 @@ import youretheyoinkreboot.world.entities.Player;
 public class Inventory {
     public final static int INV_SIZE = 64;
     
-    private final int[][] items = new int[INV_SIZE][2];
+    private final int[][] items = new int[INV_SIZE][3];
     
     private final Yoink parent;
     
     private int equippedUseable = -1;
     
-    private int[] equipped = new int[] {-1, -1, -1, -1};
+    private final int[] equipped = new int[] {-1, -1, -1, -1};
     
     public Inventory(Yoink parent) {
         this.parent = parent;
@@ -25,7 +25,7 @@ public class Inventory {
     
     public void addItem(int id, int amount) {
         if (amount > 0) {
-            if (parent instanceof Player) UIControl.MSG_DISP.showMessage("Obtained " + Item.ITEMS[id].name, 5000);
+            if (parent instanceof Player) UIControl.MSG_DISP.showMessage("Picked up " + Item.ITEMS[id].name, 5000);
             
             for (int i = 0; i < INV_SIZE; i++) {
                 if (items[i][0] == id && Item.ITEMS[items[i][0]].stackable) {
@@ -49,14 +49,15 @@ public class Inventory {
             for (int i = 0; i < INV_SIZE; i++) {
                 if (items[i][0] == id) {
                     if (items[i][1] > 1) {
-                        if (isEquipped(i)) Item.ITEMS[id].deactivateHoldEffects(parent);
+                        if (isEquipped(i)) deEquip(i);
                         items[i][1]--;
                         removeItem(id, amount - 1);
                         return;
                     } else if (items[i][1] == 1) {
-                        if (isEquipped(i)) Item.ITEMS[id].deactivateHoldEffects(parent);
+                        if (isEquipped(i)) deEquip(i);
                         items[i][0] = Item.PLACEHOLDER.id;
                         items[i][1] = 0;
+                        items[i][2] = 0;
                         if (amount > 1) removeItem(id, amount - 1);
                         return;
                     }
@@ -75,12 +76,11 @@ public class Inventory {
     
     public void equip(int index) {
         if (Item.ITEMS[items[index][0]].type != Item.TYPE_USEABLE 
-            && Item.ITEMS[items[index][0]].type != Item.TYPE_CONSUMABLE 
-            && Item.ITEMS[items[index][0]].type != Item.TYPE_RANGED) {
+            && Item.ITEMS[items[index][0]].type != Item.TYPE_CONSUMABLE) {
             for (int i = 0; i < equipped.length; i++) {
                 if (equipped[i] == -1) {
                     equipped[i] = index;
-                    Item.ITEMS[items[equipped[i]][0]].activateHoldEffects(parent);
+                    Item.ITEMS[items[equipped[i]][0]].activateHoldEffects(parent, index);
                     return;
                 }
             }
@@ -92,7 +92,7 @@ public class Inventory {
     public void deEquip(int index) {
         for (int i = 0; i < equipped.length; i++) {
             if (equipped[i] == index) {
-                Item.ITEMS[items[equipped[i]][0]].deactivateHoldEffects(parent);
+                Item.ITEMS[items[equipped[i]][0]].deactivateHoldEffects(parent, index);
                 equipped[i] = -1;
                 return;
             }
@@ -107,6 +107,13 @@ public class Inventory {
     public boolean isEquipped(int index) {
         for (int i = 0; i < getEquipped().length; i++) {
             if (getEquipped()[i] == index) return true;
+        }
+        return false;
+    }
+    
+    public boolean hasItem(Item item) {
+        for (int i = 0; i < items.length; i++) {
+            if (items[i][0] == item.id) return true;
         }
         return false;
     }

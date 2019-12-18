@@ -1,6 +1,5 @@
 package youretheyoinkreboot.core;
 
-import com.amp.mathem.Statc;
 import com.amp.pre.ABFrame;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -19,9 +18,7 @@ import youretheyoinkreboot.util.KeyToggleListener;
 import youretheyoinkreboot.util.Mouse;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.entities.Camera;
-import youretheyoinkreboot.world.entities.Garble;
 import youretheyoinkreboot.world.entities.Player;
-import youretheyoinkreboot.world.items.Item;
 import youretheyoinkreboot.world.particles.ParticleHandler;
 
 /**
@@ -32,14 +29,14 @@ public class Main extends ABFrame implements KeyToggleListener {
     
     /* TODO by v0.1:
     *  - set Player.movingDir based on mouse coords when aiming proj. item
-    *  √ add enemies
+    *  - add enemies
     *  √ add colored orbs as distinct class
     *    = increase value of orbs as distance from spawn 
-    *  - make rainbow shards define their color upon contruction 
+    *  √ make rainbow shards define their color upon contruction 
     *    = define a relationship between RGB value and stat changes
-    *  - properly implement ammo
+    *  √ properly implement ammo
     */
-    public final static String VERSION = "0.0997";
+    public final static String VERSION = "0.0998";
     
     public static boolean pause = false;
     
@@ -134,19 +131,7 @@ public class Main extends ABFrame implements KeyToggleListener {
         
         commandLine = new UICommandInput(((Screen.WIDTH / Screen.SCALE) / 2) - 2, (Screen.HEIGHT / Screen.SCALE) - 40, p);
         commandLine.hide();
-        UIControl.addUIObject(commandLine);
-        
-        p.getInventory().addItem(Item.TPLAUNCHER.id, 1);
-    }
-    
-    private void spawnTestyBois() {
-        int limit = 400; 
-        for (int i = 0; i < limit; i++) {
-            Garble garb = new Garble(Statc.intRandom(-1000, 1000), 
-                                     Statc.intRandom(-1000, 1000), w);
-            garb.enableCollision();
-            w.addEntity(garb);
-        }
+        UIControl.addUIObject(commandLine);        
     }
 
     @Override

@@ -1,12 +1,15 @@
 package youretheyoinkreboot.ui;
 
+import com.amp.mathem.Statc;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.core.gfx.SpriteSheet;
 import youretheyoinkreboot.util.Mouse;
+import youretheyoinkreboot.world.items.DroppedItem;
 import youretheyoinkreboot.world.items.Inventory;
 import youretheyoinkreboot.world.items.Item;
 
@@ -44,6 +47,9 @@ public class UIInventoryInterface extends UIObject {
                                 source.equip(i);
                             }
                         } else if (m.lastClickedButton() == 3) {
+                            int xr = source.getParent().getX() + Statc.intRandom(-20, 20);
+                            int yr = source.getParent().getY() + Statc.intRandom(-20, 20);
+                            source.getParent().getWorld().addEntity(new DroppedItem(xr, yr, Item.ITEMS[source.getItem(i)[0]], source.getParent().getWorld()));
                             source.removeItem(source.getItem(i)[0], 1);
                         }
                     }
@@ -55,25 +61,68 @@ public class UIInventoryInterface extends UIObject {
 
     @Override
     protected void draw(Graphics g) {
+        FontMetrics fm = g.getFontMetrics();
+        
         g.setColor(Color.magenta.darker().darker().darker().darker());
         g.fillRect(x-3, y-3, width+2, height+5);
         g.setColor(Color.magenta.darker().darker());
         g.fillRect(x-2, y-2, width, height+3);
         
+        int hl = 0;
         int j = 0;
         for (int i = 0; i < Inventory.INV_SIZE; i++) {
             if (source.getItem(i)[0] != Item.PLACEHOLDER.id) {
                 if (source.isEquipped(i)) {
-                    g.setColor(Color.blue);
+                    if (Item.ITEMS[source.getItem(i)[0]].type == Item.TYPE_USEABLE || Item.ITEMS[source.getItem(i)[0]].type == Item.TYPE_CONSUMABLE) {
+                        g.setColor(Color.green);
+                    } else g.setColor(Color.blue);
                     g.fillRect(x - 1, (y + (12 * j)) - 1, 10, 10);
                 }
                 g.drawImage(getIcon(Item.ITEMS[source.getItem(i)[0]].tile), x, y + (12 * j), null);
                 g.setColor(Color.white);
-                g.drawString(String.valueOf(source.getItem(i)[1]), x + 12, y + (12 * j) + 8);
+                if (Item.ITEMS[source.getItem(i)[0]].stackable) {
+                    g.drawString(String.valueOf(source.getItem(i)[1]), x + 12, y + (12 * j) + 8);
+                    if (String.valueOf(source.getItem(i)[1]).length() > String.valueOf(source.getItem(hl)[1]).length()) {
+                        hl = i;
+                    }
+                }
+                
+                Rectangle mouse = new Rectangle(m.currentCoordsOnScreen()[0], m.currentCoordsOnScreen()[1], 2, 2);
+                Rectangle icon = new Rectangle(x, (y + (12 * j)) - 1, SpriteSheet.TILE_SIZE, SpriteSheet.TILE_SIZE);
+                if (mouse.intersects(icon)) {
+                    String name = Item.ITEMS[source.getItem(i)[0]].name;
+                    String desc = Item.ITEMS[source.getItem(i)[0]].getDescription();
+                    
+                    int wName = fm.stringWidth(name);
+                    int wDesc = fm.stringWidth(desc);
+                    int heightMod = 0;
+                    if (desc.contains("&n")) {
+                        wDesc = fm.stringWidth(desc.split("&n")[Item.ITEMS[source.getItem(i)[0]].getLongestDescriptionLineIndex()]);
+                        heightMod = (desc.split("&n").length - 1) * 10;
+                    }
+
+                    int w = wName > wDesc ? wName : wDesc;
+                    
+                    g.setColor(Color.DARK_GRAY);
+                    g.fillRect(mouse.x - 2, mouse.y - 2, w + 6, 28 + heightMod);
+                    g.setColor(Color.WHITE);
+                    g.fillRect(mouse.x, mouse.y, w + 2, 24 + heightMod);
+                    g.setColor(Color.BLACK);
+                    g.drawString(name, mouse.x + 1, mouse.y + 11);
+                    g.setColor(Color.GRAY);
+                    if (!desc.contains("&n")) g.drawString(desc, mouse.x + 1, mouse.y + 22);
+                    else {
+                        for (int a = 0; a < desc.split("&n").length; a++) {
+                            g.drawString(desc.split("&n")[a], mouse.x + 1, mouse.y + 22 + (10 * a));
+                        }
+                    }
+                }
+                
                 j++;
             }
         }
         
+        width = 15 + fm.stringWidth(String.valueOf(source.getItem(hl)[1]));
         height = (12 * j) - 2;
     }
     

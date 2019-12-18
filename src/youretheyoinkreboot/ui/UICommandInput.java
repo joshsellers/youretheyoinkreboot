@@ -106,6 +106,22 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                         break;
                 }
                 break;
+            case "GIVE":
+                int id = -1;
+                int c = 1;
+                if (args.length > 1) c = Integer.parseInt(args[1]);
+                for (Item i : Item.ITEMS) if (i.name.equalsIgnoreCase(args[0])) {
+                    id = i.id;
+                    break;
+                }
+                if (id == -1) id = Integer.parseInt(args[0]);
+                if (id != -1) {
+                    p.getInventory().addItem(id, c);
+                    UIControl.MSG_DISP.showMessage("DEBUG(CMD): player given " + Item.ITEMS[id].name, 0x00FF00, 5000);
+                    break;
+                }
+                UIControl.MSG_DISP.showMessage("DEBUG(CMD): GIVE failed; invalid arguments", 0xFF0000, 5000);
+                break;
             default: 
                 UIControl.MSG_DISP.showMessage("DEBUG(CMD): unrecognized command", 0xFF0000, 5000);
                 break;
