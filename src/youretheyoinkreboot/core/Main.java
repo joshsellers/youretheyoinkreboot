@@ -37,7 +37,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     *    ► define a relationship between RGB value and stat changes
     *  √ properly implement ammo
     */
-    public final static String VERSION = "0.099975";
+    public final static String VERSION = "0.09998";
     
     public static boolean pause = false;
     

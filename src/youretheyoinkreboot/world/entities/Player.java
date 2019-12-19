@@ -16,6 +16,8 @@ import youretheyoinkreboot.world.World;
 public class Player extends Yoink implements KeyToggleListener {
     private final static boolean allowMouseTrigger = false;
     
+    private boolean showStats = false;
+    
     private Key k;
     private Mouse m;
     
@@ -133,6 +135,11 @@ public class Player extends Yoink implements KeyToggleListener {
         g.drawString("Distance from center: " + getDistanceFromCenter(), x + w + 8, y + 8);
         g.drawString("Next milestone: " + getNextDistanceMilestone(), x + w + 8, y + 19);
         g.drawString("Score: " + getScore(), x + w + 8, y + 31);
+        
+        g.setColor(Color.magenta);
+        g.drawString("Max HP: " + getMaxHP(), x + w + 8, y + 42);
+        g.drawString("Damage: " + getDamageMod(), x + w + 8, y + 53);
+        g.drawString("Max speed: " + getMaxSpeed(), x + w + 8, y + 64);
     }
 
     @Override

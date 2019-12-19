@@ -47,11 +47,22 @@ public abstract class Item {
                           ((b & 0xFF));
                 
                 holder.getInventory().getItem(index)[2] = col;
-                MSG_DISP.showMessage(r + " " + g + " " + b + " col" + Integer.toHexString(col), 0x00FF99, 5000);
+                MSG_DISP.showMessage("DEBUG: " + r + " " + g + " " + b + " col" + Integer.toHexString(col), 0x00FF99, 5000);
+                
+                int hpChange = r / 10;
+                int dmodChange = g / 10;
+                int speedChange = b / 10;
+                plyr.setMaxHitPoints(plyr.getMaxHP() + hpChange);
+                plyr.setDamageMod(plyr.getDamageMod() + dmodChange);
+                plyr.setMaxSpeed(plyr.getMaxSpeed() + speedChange);
+                MSG_DISP.showMessage("Max HP increased by " + hpChange, 0x9900AA, 5000);
+                MSG_DISP.showMessage("Damage increased by " + dmodChange, 0x9900AA, 5000);
+                MSG_DISP.showMessage("Speed increased by " + speedChange, 0x9900AA, 5000);
+                
                 /*TODO
                 * - divide colors by something like 10 to apply to stats;
                 *   = red-hp green-damageMod blue-maxSpeed
-                * - remove stat changes on deactivateHoldEffects
+            * - remove stat changes on deactivateHoldEffects
                 */
             }
             holder.setColor(holder.getColor() | holder.getInventory().getItem(index)[2]);
