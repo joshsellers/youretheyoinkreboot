@@ -37,7 +37,7 @@ public class Main extends ABFrame implements KeyToggleListener {
     *    ► define a relationship between RGB value and stat changes
     *  √ properly implement ammo
     */
-    public final static String VERSION = "0.09998";
+    public final static String VERSION = "0.09999";
     
     public static boolean pause = false;
     
@@ -135,6 +135,10 @@ public class Main extends ABFrame implements KeyToggleListener {
         UIControl.addUIObject(commandLine);
         
         w.addEntity(new DroppedItem(Statc.intRandom(-200, 200), Statc.intRandom(-200, 200), Item.ORBLAUNCHER, w));
+        
+        UIControl.MSG_DISP.showMessage("Press G to open/close the inventory", 0x0055DD, 10000);
+        UIControl.MSG_DISP.showMessage("Press ESC to pause/unpause", 0x0055DD, 10000);
+        UIControl.MSG_DISP.showMessage("Press P to show/hide stats", 0x0055DD, 10000);
     }
 
     @Override

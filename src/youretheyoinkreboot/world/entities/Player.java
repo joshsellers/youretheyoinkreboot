@@ -28,6 +28,8 @@ public class Player extends Yoink implements KeyToggleListener {
     
     private int dfc;
     private int nextDist = 20_000;
+    
+    private int dispScore;
 
     public Player(int x, int y, Key k, Mouse m, World world) {
         super("PLAYER", x, y, 16, 0, world);
@@ -132,20 +134,26 @@ public class Player extends Yoink implements KeyToggleListener {
         g.fillRect(x, y, (int) (w * ((float)getHP()/(float)getMaxHP())), h);
         
         g.setColor(Color.green);
-        g.drawString("Distance from center: " + getDistanceFromCenter(), x + w + 8, y + 8);
-        g.drawString("Next milestone: " + getNextDistanceMilestone(), x + w + 8, y + 19);
-        g.drawString("Score: " + getScore(), x + w + 8, y + 31);
-        
-        g.setColor(Color.magenta);
-        g.drawString("Max HP: " + getMaxHP(), x + w + 8, y + 42);
-        g.drawString("Damage: " + getDamageMod(), x + w + 8, y + 53);
-        g.drawString("Max speed: " + getMaxSpeed(), x + w + 8, y + 64);
+        g.drawString("Score: " + getDisplayScore(), x + w + 8, y + 8);
+        if (showStats) {
+            g.drawString("Distance from center: " + getDistanceFromCenter(), x + w + 8, y + 19);
+            g.drawString("Next milestone: " + getNextDistanceMilestone(), x + w + 8, y + 31);
+
+            g.setColor(Color.magenta);
+            g.drawString("Max HP: " + getMaxHP(), x + w + 8, y + 42);
+            g.drawString("Damage: " + getDamageMod(), x + w + 8, y + 53);
+            g.drawString("Max speed: " + getMaxSpeed(), x + w + 8, y + 64);
+        }
     }
 
     @Override
     public void keyToggled(int keyCode) {
         if (keyCode == k.e.keyCode) {
             inv.useItem(inv.getEquipped()[0]);
+        }
+        
+        if (keyCode == k.p.keyCode) {
+            showStats = !showStats;
         }
     }
     
@@ -194,10 +202,18 @@ public class Player extends Yoink implements KeyToggleListener {
     }
     
     public int getScore() {
-        return (int) (((((float) getDistanceFromCenter()) / 
-                ((float) getNextDistanceMilestone())) * 50f) + 
+        int score = (int) (((((float) getDistanceFromCenter()) / 
+                ((float) getNextDistanceMilestone())) * 45f) + 
                 ((((float) getDistanceFromCenter()) / 
-                ((float) Integer.MAX_VALUE)) * 100 ) * 50f);
+                ((float) Integer.MAX_VALUE)) * 1000) * 55f);
+        
+        if (score > dispScore) dispScore = score;
+        return score;
+    }
+    
+    public int getDisplayScore() {
+        getScore();
+        return dispScore + killCount();
     }
     
     public int getNextDistanceMilestone() {

@@ -5,6 +5,7 @@ import java.awt.Rectangle;
 import youretheyoinkreboot.core.gfx.Screen;
 import youretheyoinkreboot.world.World;
 import youretheyoinkreboot.world.particles.Particle;
+import youretheyoinkreboot.world.particles.Projectile;
 
 /**
  *
@@ -49,6 +50,8 @@ public abstract class Entity {
     protected Camera cam = null;
     
     protected boolean hasDied = false;
+    
+    private int kills = 0;
     
     public Entity(String id, int x, int y, int width, int height, int maxHitPoints, World w) {
         this.id = id;
@@ -162,6 +165,10 @@ public abstract class Entity {
     protected void die(Entity source) {
         active = false;
         hasDied = true;
+        source.addKill();
+        if (source instanceof Projectile) {
+            ((Projectile) source).getSource().addKill();
+        }
         onDie(source);
     }
     
@@ -366,5 +373,13 @@ public abstract class Entity {
     
     public boolean hasDied() {
         return this.hasDied;
+    }
+    
+    public void addKill() {
+        kills++;
+    }
+    
+    public int killCount() {
+        return kills;
     }
 }

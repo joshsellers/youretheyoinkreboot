@@ -32,20 +32,22 @@ public class AngryYoink extends Yoink {
         if (attackMethod) {
             dist = 100;
         }
-
-        if (p.getX() + (p.getWidth() / 2) + dist - 1< this.x + (getWidth() / 2)) {
-            thrustLeft();
-            left = true;
-        } else if (p.getX() + (p.getWidth() / 2) - dist + 1 > this.x + (this.getWidth() / 2)) {
-            thrustRight();
-            right = true;
-        }
-        if (p.getY() + (p.getHeight() / 2) + dist - 1 < this.y + (this.getHeight() / 2)) {
-            thrustUp();
-            up = true;
-        } else if (p.getY() + (p.getHeight() / 2) - dist + 1 > this.y + (this.getHeight() / 2)) {
-            thrustDown();
-            down = true;
+        
+        if (shouldAttack()) {
+            if (p.getX() + (p.getWidth() / 2) + dist - 1 < this.x + (getWidth() / 2)) {
+                thrustLeft();
+                left = true;
+            } else if (p.getX() + (p.getWidth() / 2) - dist + 1 > this.x + (this.getWidth() / 2)) {
+                thrustRight();
+                right = true;
+            }
+            if (p.getY() + (p.getHeight() / 2) + dist - 1 < this.y + (this.getHeight() / 2)) {
+                thrustUp();
+                up = true;
+            } else if (p.getY() + (p.getHeight() / 2) - dist + 1 > this.y + (this.getHeight() / 2)) {
+                thrustDown();
+                down = true;
+            }
         }
 
         if (up && left) {
@@ -91,6 +93,11 @@ public class AngryYoink extends Yoink {
                 attackMethod = ATTACKMETHOD_RANGED;
             }
         }
+    }
+    
+    public boolean shouldAttack() {
+        int dist = (int) Math.sqrt(Math.pow(p.getX() - getX(), 2) + Math.pow(p.getY() - getY(), 2));
+        return dist < 9000;
     }
     
     public Player getPlayer() {

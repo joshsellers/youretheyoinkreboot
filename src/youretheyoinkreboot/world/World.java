@@ -126,7 +126,6 @@ public class World {
         
         int dfc = (int) Math.sqrt(Math.pow((p.getX()), 2) + Math.pow(p.getY(), 2));
         if (n) {
-            //MSG_DISP.showMessage("DEBUG(WORLDGEN): PDFC " + dfc, 0x00FF11, 10);
             p.setDistanceFromCenter(dfc);
         }
         
@@ -136,7 +135,7 @@ public class World {
             if (nx) addEnemies(x, p.getY(), false, p);
             if (ny) addEnemies(p.getX(), y, true, p);
             
-            nextEnemyInterval = enemyStagger + Statc.intRandom(0, ENEMY_SPAWNRATE);
+            nextEnemyInterval = enemyStagger + Statc.intRandom(0, ENEMY_SPAWNRATE - p.getScore());
             enemyStagger++;
         } else {
             enemyStagger++;
@@ -148,7 +147,7 @@ public class World {
             if (nx) addGarbles(x, p.getY(), false);
             if (ny) addGarbles(p.getX(), y, true);
             
-            nextGarbleInterval = garbleStagger + Statc.intRandom(0, GARBLE_SPAWNRATE);
+            nextGarbleInterval = garbleStagger + Statc.intRandom(0, GARBLE_SPAWNRATE - p.getScore());
             garbleStagger++;
         } else {
             garbleStagger++;
@@ -164,10 +163,10 @@ public class World {
  
         AngryYoink yoink = new AngryYoink(x, y, Statc.intRandom(0, 1) == 0, p);
         yoink.setColor(Statc.intRandom(0xFF0000, 0xFF1010));
-        yoink.setDamageMod(Statc.intRandom(1, 5));
+        yoink.setDamageMod(Statc.intRandom(1, p.getDamageMod() + 2));
         yoink.setKnockback(1);
         yoink.enableCollision();
-        yoink.setMaxSpeed(7);
+        yoink.setMaxSpeed(Statc.intRandom(5, p.getMaxSpeed()));
         yoink.getInventory().addItem(Item.ORBLAUNCHER.id, 1);
         yoink.getInventory().addItem(Item.PURPLEORB.id, Statc.intRandom(10, 75));
         yoink.getInventory().equip(0);

@@ -130,6 +130,21 @@ public class UICommandInput extends UIObject implements KeyToggleListener {
                 }
                 UIControl.MSG_DISP.showMessage("DEBUG(CMD): GIVE failed; invalid arguments", 0xFF0000, 5000);
                 break;
+            case "EGM":
+                currentCommand = "PLAYER:SETMAXHP,1000000";
+                processCommand();
+                currentCommand = "PLAYER:SETMAXSPEED,100";
+                processCommand();
+                currentCommand = "PLAYER:SETACCMOD,100";
+                processCommand();
+                break;
+            case "DGM":
+                currentCommand = "PLAYER:SETMAXHP,100";
+                processCommand();
+                currentCommand = "PLAYER:SETMAXSPEED,6";
+                processCommand();
+                currentCommand = "PLAYER:SETACCMOD,1";
+                processCommand();
             default: 
                 UIControl.MSG_DISP.showMessage("DEBUG(CMD): unrecognized command", 0xFF0000, 5000);
                 break;

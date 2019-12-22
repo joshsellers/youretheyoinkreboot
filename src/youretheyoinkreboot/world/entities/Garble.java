@@ -33,7 +33,7 @@ public class Garble extends AnimatedSprite {
 
     @Override
     protected void onCollision(Entity with) {
-        damage(10, with);
+        damage(10 + with.getDamageMod(), with);
     }
 
     @Override
